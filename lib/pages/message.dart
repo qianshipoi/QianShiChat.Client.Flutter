@@ -10,16 +10,16 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
-  var db_nmme = 'mydb.db';
-  var tb_name = 'message';
+  var dbNmme = 'mydb.db';
+  var tbName = 'message';
   Future<Database> _getDb() async {
-    return await openDatabase(join(await getDatabasesPath(), db_nmme));
+    return await openDatabase(join(await getDatabasesPath(), dbNmme));
   }
 
   void _createTable() async {
     var db = await _getDb();
     db.execute("""
-      create table if not exists $tb_name(
+      create table if not exists $tbName(
         id integer primary key autoincrement,
         content text not null,
         time text not null
@@ -29,23 +29,23 @@ class _MessagePageState extends State<MessagePage> {
 
   void addData(String content, String time) async {
     var db = await _getDb();
-    db.insert(tb_name, {'content': content, 'time': time});
+    db.insert(tbName, {'content': content, 'time': time});
   }
 
   void deleteData(int id) async {
     var db = await _getDb();
-    db.delete(tb_name, where: 'id = ?', whereArgs: [id]);
+    db.delete(tbName, where: 'id = ?', whereArgs: [id]);
   }
 
   void updateData(int id, String content, String time) async {
     var db = await _getDb();
-    db.update(tb_name, {'content': content, 'time': time},
+    db.update(tbName, {'content': content, 'time': time},
         where: 'id = ?', whereArgs: [id]);
   }
 
   void queryData() async {
     var db = await _getDb();
-    var res = await db.query(tb_name);
+    var res = await db.query(tbName);
     print(res);
   }
 
