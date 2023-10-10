@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -233,6 +234,11 @@ class _LoginPageState extends State<LoginPage> {
       var response = await dio.post('Auth',
           data: {"account": _account, "password": generateMD5(_password)});
       print(response.headers['x-access-token']!.first);
+
+      var preferences = await SharedPreferences.getInstance();
+      preferences.setString('token', response.headers['x-access-token']!.first);
+      
+
       print(response.data);
     } catch (e) {
       print(e);
