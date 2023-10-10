@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:qianshi_chat/pages/found.dart';
-import 'package:qianshi_chat/pages/friend.dart';
-import 'package:qianshi_chat/pages/message.dart';
+import 'package:qianshi_chat/pages/found_page.dart';
+import 'package:qianshi_chat/pages/friend_page.dart';
+import 'package:qianshi_chat/pages/message_page.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
   List pages = [const MessagePage(), const FoundPage(), const FriendPage()];
   List<BottomNavigationBarItem> bottomItems = [
     const BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Messages'),

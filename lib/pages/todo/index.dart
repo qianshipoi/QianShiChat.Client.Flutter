@@ -14,6 +14,12 @@ class TodoIndex extends StatefulWidget {
 class _TodoIndexState extends State<TodoIndex> {
   late Future<List<Todo>> _future;
 
+  @override
+  void initState() {
+    super.initState();
+    _future = fetchCardInfo();
+  }
+
   //刷新数据
   Future refresh() async {
     setState(() {
@@ -62,6 +68,7 @@ class _TodoIndexState extends State<TodoIndex> {
           trailing: IconButton(
             onPressed: () {
               DBProvider.db.deleteData(todos[index].id);
+              refresh();
             },
             icon: const Icon(Icons.delete),
           ),

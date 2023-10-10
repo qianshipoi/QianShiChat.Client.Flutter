@@ -23,7 +23,7 @@ class AddTodoPageState extends State<AddTodoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Second Route'),
+        title: const Text('Add Todo'),
       ),
       body: Column(
         children: [
