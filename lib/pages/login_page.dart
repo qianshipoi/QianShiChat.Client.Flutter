@@ -4,6 +4,9 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:qianshi_chat/models/userinfo.dart';
+import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -233,13 +236,13 @@ class _LoginPageState extends State<LoginPage> {
     try {
       var response = await dio.post('Auth',
           data: {"account": _account, "password": generateMD5(_password)});
-      print(response.headers['x-access-token']!.first);
-
       var preferences = await SharedPreferences.getInstance();
       preferences.setString('token', response.headers['x-access-token']!.first);
-      
-
-      print(response.data);
+      var user = UserInfo.fromJson(json.encode(response.data['data']));
+      preferences.setString('current_user', user.toJson());
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const HomePage()),
+          (route) => false);
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(

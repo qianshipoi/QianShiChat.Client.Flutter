@@ -8,7 +8,7 @@ class UserInfo {
   String avatar;
   int createTime;
   bool isOnline;
-  String alias;
+  String? alias;
   UserInfo({
     required this.id,
     required this.account,
@@ -16,7 +16,7 @@ class UserInfo {
     required this.avatar,
     required this.createTime,
     required this.isOnline,
-    required this.alias,
+    this.alias,
   });
 
   UserInfo copyWith({
@@ -59,13 +59,14 @@ class UserInfo {
       avatar: map['avatar'] as String,
       createTime: map['createTime'] as int,
       isOnline: map['isOnline'] as bool,
-      alias: map['alias'] as String,
+      alias: map['alias'] as String?,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory UserInfo.fromJson(String source) => UserInfo.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserInfo.fromJson(String source) =>
+      UserInfo.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -76,24 +77,23 @@ class UserInfo {
   bool operator ==(covariant UserInfo other) {
     if (identical(this, other)) return true;
 
-    return
-      other.id == id &&
-      other.account == account &&
-      other.nickName == nickName &&
-      other.avatar == avatar &&
-      other.createTime == createTime &&
-      other.isOnline == isOnline &&
-      other.alias == alias;
+    return other.id == id &&
+        other.account == account &&
+        other.nickName == nickName &&
+        other.avatar == avatar &&
+        other.createTime == createTime &&
+        other.isOnline == isOnline &&
+        other.alias == alias;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      account.hashCode ^
-      nickName.hashCode ^
-      avatar.hashCode ^
-      createTime.hashCode ^
-      isOnline.hashCode ^
-      alias.hashCode;
+        account.hashCode ^
+        nickName.hashCode ^
+        avatar.hashCode ^
+        createTime.hashCode ^
+        isOnline.hashCode ^
+        alias.hashCode;
   }
 }
