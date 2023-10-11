@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qianshi_chat/constants.dart';
-import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
@@ -28,7 +25,6 @@ class _SplahScreenPageState extends State<SplahScreenPage> {
   }
 
   _checkToken(context) async {
-    logger.i('check token');
     var preferences = await SharedPreferences.getInstance();
     if (preferences.containsKey(accessTokenKey)) {
       Navigator.of(context).pushAndRemoveUntil(
