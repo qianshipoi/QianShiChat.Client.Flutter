@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qianshi_chat/pages/found_page.dart';
 import 'package:qianshi_chat/pages/friend_page.dart';
 import 'package:qianshi_chat/pages/message_page.dart';
+import 'package:qianshi_chat/stores/current_store.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +20,7 @@ class _HomePageState extends State<HomePage> {
     const BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Friends'),
   ];
   int currentPage = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,12 +37,25 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.deepPurple),
-              child: Text('Drawer Header'),
+          children: [
+            Consumer<CurrentUserStore>(
+              builder: (context, value, child) {
+                return DrawerHeader(
+                  decoration: const BoxDecoration(color: Colors.deepPurple),
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    child: ClipOval(
+                      child: Image.network(
+                        value.current().avatar,
+                        width: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-            ListTile(
+            const ListTile(
               title: Text('Messages'),
               trailing: Icon(Icons.keyboard_arrow_right),
             )
