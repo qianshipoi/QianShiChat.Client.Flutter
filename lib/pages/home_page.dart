@@ -36,8 +36,8 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: const [
             DrawerHeader(
-              child: Text('Drawer Header'),
               decoration: BoxDecoration(color: Colors.deepPurple),
+              child: Text('Drawer Header'),
             ),
             ListTile(
               title: Text('Messages'),

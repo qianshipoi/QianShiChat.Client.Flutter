@@ -4,7 +4,8 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -140,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
         alignment: Alignment.centerRight,
         child: TextButton(
           onPressed: () {
-            print('忘记密码');
+            logger.i('忘记密码');
           },
           child: const Text(
             '忘记密码？',
@@ -167,7 +168,6 @@ class _LoginPageState extends State<LoginPage> {
           // 表单校验通过才会继续执行
           if ((_formKey.currentState as FormState).validate()) {
             (_formKey.currentState as FormState).save();
-            print('account: $_account, password: $_password');
             _doLogin(context);
           }
         },
@@ -217,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(color: Colors.green),
           ),
           onTap: () {
-            print('去注册');
+            logger.i('去注册');
           },
         )
       ],
@@ -225,8 +225,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future _doLogin(context) async {
-    var dio = Dio();
-    dio.options.baseUrl = "https://chat-api.kuriyama.top/api/";
+    var dio = Dio(BaseOptions(baseUrl: apiBaseUrl));
+    dio.options.headers['Client-Type'] = clientType;
 
     dio.interceptors.add(LogInterceptor(
         requestHeader: true,
@@ -237,14 +237,15 @@ class _LoginPageState extends State<LoginPage> {
       var response = await dio.post('Auth',
           data: {"account": _account, "password": generateMD5(_password)});
       var preferences = await SharedPreferences.getInstance();
-      preferences.setString('token', response.headers['x-access-token']!.first);
+      preferences.setString(
+          accessTokenKey, response.headers['x-access-token']!.first);
       var user = UserInfo.fromJson(json.encode(response.data['data']));
-      preferences.setString('current_user', user.toJson());
+      preferences.setString(userInfoKey, user.toJson());
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);
     } catch (e) {
-      print(e);
+      logger.e(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: const Text('账号或密码错误'),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qianshi_chat/main.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -46,7 +47,7 @@ class _MessagePageState extends State<MessagePage> {
   void queryData() async {
     var db = await _getDb();
     var res = await db.query(tbName);
-    print(res);
+    logger.i(res);
   }
 
   @override
