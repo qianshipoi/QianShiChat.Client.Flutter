@@ -8,6 +8,7 @@ import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
+import 'package:qianshi_chat/utils/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -236,9 +237,11 @@ class _LoginPageState extends State<LoginPage> {
     try {
       var response = await dio.post('Auth',
           data: {"account": _account, "password": generateMD5(_password)});
+
+      var token = response.headers['x-access-token']!.first;
       var preferences = await SharedPreferences.getInstance();
-      preferences.setString(
-          accessTokenKey, response.headers['x-access-token']!.first);
+      preferences.setString(accessTokenKey, token);
+      Global.accessToken = preferences.getString(token)!;
       var user = UserInfo.fromJson(json.encode(response.data['data']));
       preferences.setString(userInfoKey, user.toJson());
       Navigator.of(context).pushAndRemoveUntil(

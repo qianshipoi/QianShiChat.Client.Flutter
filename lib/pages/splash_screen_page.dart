@@ -4,6 +4,7 @@ import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
+import 'package:qianshi_chat/utils/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplahScreenPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class _SplahScreenPageState extends State<SplahScreenPage> {
   _checkToken(context) async {
     var preferences = await SharedPreferences.getInstance();
     if (preferences.containsKey(accessTokenKey)) {
+      Global.accessToken = preferences.getString(accessTokenKey)!;
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);
