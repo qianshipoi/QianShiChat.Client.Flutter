@@ -4,6 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/locale/locale_message.dart';
+import 'package:qianshi_chat/pages/chat_page.dart';
+import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/stores/friend_store.dart';
@@ -58,6 +60,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: appTitle,
+      routes: {
+        // "/": (context) => const HomePage(),
+        "/chat": (context) => const ChatPage()
+      },
       translations: LocaleMessage(),
       locale: const Locale('zh', 'CN'),
       fallbackLocale: const Locale('en', 'US'),

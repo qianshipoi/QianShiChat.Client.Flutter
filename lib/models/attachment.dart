@@ -6,7 +6,7 @@ class Attachment {
   int id;
   String name;
   String rawPath;
-  String previewPath;
+  String? previewPath;
   String hash;
   String contentType;
   int size;
@@ -62,7 +62,7 @@ class Attachment {
       id: map['id'] as int,
       name: map['name'] as String,
       rawPath: map['rawPath'] as String,
-      previewPath: map['previewPath'] as String,
+      previewPath: map['previewPath'] as String?,
       hash: map['hash'] as String,
       contentType: map['contentType'] as String,
       size: map['size'] as int,

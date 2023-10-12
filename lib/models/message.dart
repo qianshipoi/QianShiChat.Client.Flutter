@@ -13,7 +13,7 @@ class Message {
   int id;
   int fromId;
   int toId;
-  int roomId;
+  String roomId;
   MessageSendType sendType;
   MessageType messageType;
   dynamic content;
@@ -39,7 +39,7 @@ class Message {
     int? id,
     int? fromId,
     int? toId,
-    int? roomId,
+    String? roomId,
     dynamic content,
     int? createTime,
     UserInfo? fromUser,
@@ -84,17 +84,17 @@ class Message {
       id: map['id'] as int,
       fromId: map['fromId'] as int,
       toId: map['toId'] as int,
-      roomId: map['roomId'] as int,
+      roomId: map['roomId'] as String,
       content: map['content'] as dynamic,
       createTime: map['createTime'] as int,
       sendType: MessageSendType.values[map['sendType'] as int],
-      messageType: MessageType.values[map['messageType'] as int],
-      status: MessageStatus.values[map['status'] as int],
+      messageType: MessageType.fromValue(map['messageType'] as int),
+      status: MessageStatus.values[map['status'] ?? 0],
       fromUser: map['fromUser'] != null
           ? UserInfo.fromMap(map['fromUser'] as Map<String, dynamic>)
           : null,
       attachments: List<Attachment>.from(
-        (map['attachments'] as List<int>).map<Attachment>(
+        (map['attachments'] as List<dynamic>).map<Attachment>(
           (x) => Attachment.fromMap(x as Map<String, dynamic>),
         ),
       ),

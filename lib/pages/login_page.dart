@@ -4,10 +4,13 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
+import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/utils/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

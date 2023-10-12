@@ -1,10 +1,10 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qianshi_chat/constants.dart';
-import 'package:qianshi_chat/main.dart';
+import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:qianshi_chat/utils/http/http_util.dart';
 
 class FriendPage extends StatefulWidget {
   const FriendPage({super.key});
@@ -17,20 +17,13 @@ class _FriendPageState extends State<FriendPage> {
   late Future<List<UserInfo>> _future;
 
   Future<List<UserInfo>> getFriends() async {
-    var dio = Dio(BaseOptions(baseUrl: apiBaseUrl));
-    dio.options.headers['Client-Type'] = clientType;
-    var preferences = await SharedPreferences.getInstance();
-
-    logger.i(preferences.containsKey(accessTokenKey));
-    if (preferences.containsKey(accessTokenKey)) {
-      dio.options.headers['Authorization'] =
-          'Bearer ${preferences.getString(accessTokenKey)}';
+    var response = await HttpUtils.get("friend");
+    var result = GlobalResponse.fromMap(response);
+    if (!result.succeeded) {
+      throw Exception(jsonEncode(result.errors));
     }
-    var response = await dio.get("friend");
-
     List<Map<String, dynamic>> listMap =
-        List<Map<String, dynamic>>.from(response.data['data']);
-    logger.i(listMap);
+        List<Map<String, dynamic>>.from(result.data);
     return listMap.map((e) => UserInfo.fromMap(e)).toList();
   }
 
@@ -88,6 +81,7 @@ class _FriendPageState extends State<FriendPage> {
             trailing: IconButton(
                 icon: const Icon(Icons.keyboard_arrow_right),
                 onPressed: () => Get.toNamed('/chat', arguments: users[index])),
+            onTap: () => Get.toNamed('/chat', arguments: users[index]),
           );
         });
   }
