@@ -19,12 +19,10 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  late Future _future;
+  late Future<List<Message>> _future;
   UserInfo user = Get.arguments;
   var currentUser = Get.find<CurrentUserController>().current.value;
   var page = 1;
-  var hasMore = true;
-  List<Message> messages = [];
 
   @override
   void initState() {
@@ -33,13 +31,12 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future refresh() async {
-    if (!hasMore) return;
     setState(() {
       _future = getHistory();
     });
   }
 
-  Future getHistory() async {
+  Future<List<Message>> getHistory() async {
     var roomId = currentUser.id < user.id
         ? '${currentUser.id}-${user.id}'
         : '${user.id}-${currentUser.id}';
@@ -50,19 +47,15 @@ class _ChatPageState extends State<ChatPage> {
       throw Exception(jsonEncode(result.errors));
     }
     PagedList pagedList = PagedList.fromMap(result.data);
-    hasMore = pagedList.hasNext;
-    page++;
-
     List<Map<String, dynamic>> listMap =
         List<Map<String, dynamic>>.from(pagedList.items);
-    var data = listMap.map((e) => Message.fromMap(e)).toList();
-    messages.insertAll(0, data);
+    return listMap.map((e) => Message.fromMap(e)).toList();
   }
 
-  FutureBuilder buildFutureBuilder() {
+  FutureBuilder<List<Message>> buildFutureBuilder() {
     return FutureBuilder(
         future: _future,
-        builder: (context, AsyncSnapshot async) {
+        builder: (context, AsyncSnapshot<List<Message>> async) {
           if (async.connectionState == ConnectionState.active ||
               async.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -76,9 +69,8 @@ class _ChatPageState extends State<ChatPage> {
               );
             } else if (async.hasData) {
               return RefreshIndicator(
-                  notificationPredicate: (notification) => hasMore,
                   onRefresh: refresh,
-                  child: buildListView(context, messages));
+                  child: buildListView(context, async.data!));
             }
           }
           return const Center(
@@ -87,16 +79,16 @@ class _ChatPageState extends State<ChatPage> {
         });
   }
 
-  Widget buildListView(BuildContext context, List<Message> messages) {
+  Widget buildListView(BuildContext context, List<Message> users) {
     return ListView.separated(
         separatorBuilder: (BuildContext context, int index) => const SizedBox(
               height: 12,
             ),
-        itemCount: messages.length,
+        itemCount: users.length,
         itemBuilder: (context, index) {
           return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: buildMessageView(context, messages[index]));
+              child: buildMessageView(context, users[index]));
         });
   }
 
@@ -121,11 +113,6 @@ class _ChatPageState extends State<ChatPage> {
       default:
         return const Text('not support message type');
     }
-  }
-
-  Widget buildVideoMessageView(
-      Attachment attachment, bool isMe, UserInfo user) {
-    return buildBaseMessageView(isMe, user, const Text('Video'));
   }
 
   Widget buildAudioMessageView(Attachment arguments, bool isMe, UserInfo user) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:qianshi_chat/pages/found_page.dart';
 import 'package:qianshi_chat/pages/friend_page.dart';
 import 'package:qianshi_chat/pages/message_page.dart';
@@ -38,22 +38,20 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            Consumer<CurrentUserStore>(
-              builder: (context, value, child) {
-                return DrawerHeader(
-                  decoration: const BoxDecoration(color: Colors.deepPurple),
-                  child: Container(
-                    alignment: Alignment.topLeft,
-                    child: ClipOval(
-                      child: Image.network(
-                        value.current().avatar,
-                        width: 60,
-                        fit: BoxFit.cover,
-                      ),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.deepPurple),
+              child: Container(
+                alignment: Alignment.topLeft,
+                child: ClipOval(
+                  child: GetX<CurrentUserController>(
+                    builder: (controller) => Image.network(
+                      controller.current.value.avatar,
+                      width: 60,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
             const ListTile(
               title: Text('Messages'),

@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+class CurrentUserController extends GetxController {
+  late Rx<UserInfo> current;
+  CurrentUserController({
+    required UserInfo userInfo,
+  }) {
+    current = userInfo.obs;
+  }
+}
 
 class CurrentUserStore extends ChangeNotifier {
   UserInfo? _current;

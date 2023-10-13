@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import 'app_exception.dart';
 
 class MyDioSocketException extends SocketException {
-  @override
-  late String message;
+  set message(String message) => this.message = message;
 
   MyDioSocketException(
     message, {

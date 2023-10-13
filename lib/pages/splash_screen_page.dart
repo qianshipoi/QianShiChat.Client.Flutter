@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
@@ -17,8 +18,6 @@ class SplahScreenPage extends StatefulWidget {
 class _SplahScreenPageState extends State<SplahScreenPage> {
   @override
   Widget build(BuildContext context) {
-    context.watch<CurrentUserStore>().init();
-
     _checkToken(context);
     return const Scaffold(
       body: Center(child: Text('Splash Screen')),
@@ -29,6 +28,9 @@ class _SplahScreenPageState extends State<SplahScreenPage> {
     var preferences = await SharedPreferences.getInstance();
     if (preferences.containsKey(accessTokenKey)) {
       Global.accessToken = preferences.getString(accessTokenKey)!;
+      var userStr = preferences.getString(userInfoKey);
+      var user = UserInfo.fromJson(userStr!);
+      Get.put(() => CurrentUserController(userInfo: user));
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);

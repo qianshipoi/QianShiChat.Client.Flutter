@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_meedu_videoplayer/init_meedu_player.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/locale/locale_message.dart';
 import 'package:qianshi_chat/pages/chat_page.dart';
-import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/stores/friend_store.dart';
@@ -50,6 +50,9 @@ Future<void> initStore() async {
 
   // init database
   // await Get.putAsync(() => DatabaseService().init());
+
+  initMeeduPlayer();
+
   await DBProvider.db.initDB();
 }
 

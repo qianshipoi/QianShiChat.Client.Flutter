@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names, prefer_collection_literals
+
 import 'dart:collection';
 
 import 'package:dio/dio.dart';
@@ -29,10 +31,10 @@ class NetCacheInterceptor extends Interceptor {
   @override
   void onRequest(
     RequestOptions options,
-    RequestInterceptorHandler requestCb,
+    RequestInterceptorHandler handler,
   ) async {
     if (!CACHE_ENABLE) {
-      return super.onRequest(options, requestCb);
+      return super.onRequest(options, handler);
     }
 
     // refresh标记是否是刷新缓存
@@ -82,17 +84,16 @@ class NetCacheInterceptor extends Interceptor {
         }
       }
     }
-    return super.onRequest(options, requestCb);
+    return super.onRequest(options, handler);
   }
 
   @override
-  void onResponse(
-      Response response, ResponseInterceptorHandler responseCb) async {
+  void onResponse(Response response, ResponseInterceptorHandler handler) async {
     // 如果启用缓存，将返回结果保存到缓存
     if (CACHE_ENABLE) {
       await _saveCache(response);
     }
-    return super.onResponse(response, responseCb);
+    return super.onResponse(response, handler);
   }
 
   Future<void> _saveCache(Response object) async {

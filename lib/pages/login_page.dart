@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/main.dart';
+import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/utils/global.dart';
+import 'package:qianshi_chat/utils/http/http_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,7 +23,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
-  bool _isObscure = true;
+  var _isObscure = true;
   late String _account, _password;
   Color _eyeColor = Colors.grey;
   final List _loginMethod = [
@@ -229,24 +229,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future _doLogin(context) async {
-    var dio = Dio(BaseOptions(baseUrl: apiBaseUrl));
-    dio.options.headers['Client-Type'] = clientType;
-
-    dio.interceptors.add(LogInterceptor(
-        requestHeader: true,
-        requestBody: true,
-        responseHeader: true,
-        responseBody: true));
     try {
-      var response = await dio.post('Auth',
+      var response = await HttpUtils.put('Auth',
           data: {"account": _account, "password": generateMD5(_password)});
+      var result = GlobalResponse.fromMap(response.data);
 
       var token = response.headers['x-access-token']!.first;
       var preferences = await SharedPreferences.getInstance();
       preferences.setString(accessTokenKey, token);
       Global.accessToken = preferences.getString(token)!;
-      var user = UserInfo.fromJson(json.encode(response.data['data']));
+      var user = UserInfo.fromJson(json.encode(result.data));
       preferences.setString(userInfoKey, user.toJson());
+
+      Get.put(() => CurrentUserController(userInfo: user));
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);

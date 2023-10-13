@@ -25,6 +25,12 @@ dependencies:
   json_serializable: ^6.7.1
   json_annotation: ^4.1.1
   build_runner: ^2.1.5
+  audioplayers: ^5.2.0
+  flutter_meedu_videoplayer: ^4.3.1
+  ffmpeg_kit_flutter: 6.0.3-LTS
+  photo_view: ^0.14.0
+  wechat_camera_picker: ^4.0.2
+  flutter_scankit: ^2.0.2
 
 dev_dependencies:
   flutter_test:
