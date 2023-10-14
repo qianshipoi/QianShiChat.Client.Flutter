@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:path/path.dart';
 import 'package:qianshi_chat/models/todo.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBProvider {
   DBProvider._();
@@ -18,6 +20,11 @@ class DBProvider {
   var tbName = 'todo';
 
   initDB() async {
+    sqfliteFfiInit();
+    if (Platform.isWindows) {
+      databaseFactory = databaseFactoryFfi;
+    }
+
     return await openDatabase(join(await getDatabasesPath(), dbNmme),
         version: 1,
         onOpen: (db) {}, onCreate: (Database db, int version) async {

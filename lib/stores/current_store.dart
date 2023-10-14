@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,12 +7,7 @@ import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 
 class CurrentUserController extends GetxController {
-  late Rx<UserInfo> current;
-  CurrentUserController({
-    required UserInfo userInfo,
-  }) {
-    current = userInfo.obs;
-  }
+  Rx<UserInfo?> current = Rx<UserInfo?>(null);
 }
 
 class CurrentUserStore extends ChangeNotifier {

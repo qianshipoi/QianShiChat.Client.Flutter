@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/enums/message_type.dart';
 import 'package:qianshi_chat/models/global_response.dart';
@@ -21,7 +22,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   late Future _future;
   UserInfo user = Get.arguments;
-  var currentUser = Get.find<CurrentUserController>().current.value;
+  var currentUser = Get.find<CurrentUserController>().current.value!;
   var page = 1;
   var hasMore = true;
   List<Message> messages = [];
@@ -43,20 +44,25 @@ class _ChatPageState extends State<ChatPage> {
     var roomId = currentUser.id < user.id
         ? '${currentUser.id}-${user.id}'
         : '${user.id}-${currentUser.id}';
+    logger.i(roomId);
 
-    var response = await HttpUtils.get("chat/$roomId/history?page=1");
-    var result = GlobalResponse.fromMap(response);
+    var response =
+        await HttpUtils.get("chat/personal-$roomId/history?page=$page");
+    var result = GlobalResponse.fromMap(response.data);
     if (!result.succeeded) {
       throw Exception(jsonEncode(result.errors));
     }
-    PagedList pagedList = PagedList.fromMap(result.data);
-    hasMore = pagedList.hasNext;
-    page++;
+    var pagedList = PagedList.fromMap(result.data);
 
-    List<Map<String, dynamic>> listMap =
-        List<Map<String, dynamic>>.from(pagedList.items);
+    var listMap = List<Map<String, dynamic>>.from(pagedList.items);
     var data = listMap.map((e) => Message.fromMap(e)).toList();
-    messages.insertAll(0, data);
+    setState(() {
+      messages.insertAll(0, data);
+      hasMore = pagedList.hasNext;
+      page++;
+    });
+    logger.i(data);
+    return data;
   }
 
   FutureBuilder buildFutureBuilder() {

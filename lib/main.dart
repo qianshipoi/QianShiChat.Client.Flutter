@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meedu_videoplayer/init_meedu_player.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +25,7 @@ var logger = Logger(
   ),
 );
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initStore();
   runApp(
@@ -51,7 +50,9 @@ Future<void> initStore() async {
   // init database
   // await Get.putAsync(() => DatabaseService().init());
 
-  initMeeduPlayer();
+  Get.lazyPut(() => CurrentUserController());
+
+  // initMeeduPlayer();
 
   await DBProvider.db.initDB();
 }

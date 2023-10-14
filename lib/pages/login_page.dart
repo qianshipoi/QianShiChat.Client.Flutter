@@ -230,18 +230,20 @@ class _LoginPageState extends State<LoginPage> {
 
   Future _doLogin(context) async {
     try {
-      var response = await HttpUtils.put('Auth',
+      var response = await HttpUtils.post('Auth',
           data: {"account": _account, "password": generateMD5(_password)});
       var result = GlobalResponse.fromMap(response.data);
+      logger.i(response.headers);
 
       var token = response.headers['x-access-token']!.first;
+
       var preferences = await SharedPreferences.getInstance();
       preferences.setString(accessTokenKey, token);
-      Global.accessToken = preferences.getString(token)!;
+      Global.accessToken = token;
       var user = UserInfo.fromJson(json.encode(result.data));
       preferences.setString(userInfoKey, user.toJson());
 
-      Get.put(() => CurrentUserController(userInfo: user));
+      Get.find<CurrentUserController>().current.value = user;
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);

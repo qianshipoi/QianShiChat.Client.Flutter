@@ -30,7 +30,9 @@ class _SplahScreenPageState extends State<SplahScreenPage> {
       Global.accessToken = preferences.getString(accessTokenKey)!;
       var userStr = preferences.getString(userInfoKey);
       var user = UserInfo.fromJson(userStr!);
-      Get.put(() => CurrentUserController(userInfo: user));
+
+      var currentUserController = Get.find<CurrentUserController>();
+      currentUserController.current.value = user;
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);

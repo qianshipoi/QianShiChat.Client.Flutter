@@ -18,7 +18,7 @@ class _FriendPageState extends State<FriendPage> {
 
   Future<List<UserInfo>> getFriends() async {
     var response = await HttpUtils.get("friend");
-    var result = GlobalResponse.fromMap(response);
+    var result = GlobalResponse.fromMap(response.data);
     if (!result.succeeded) {
       throw Exception(jsonEncode(result.errors));
     }
@@ -76,11 +76,16 @@ class _FriendPageState extends State<FriendPage> {
         itemCount: users.length,
         itemBuilder: (context, index) {
           return ListTile(
+            leading: ClipOval(
+              child: Image.network(
+                users[index].avatar,
+                width: 40,
+                fit: BoxFit.cover,
+              ),
+            ),
             title: Text(users[index].nickName),
             subtitle: buildOnlineStatus(users[index]),
-            trailing: IconButton(
-                icon: const Icon(Icons.keyboard_arrow_right),
-                onPressed: () => Get.toNamed('/chat', arguments: users[index])),
+            trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () => Get.toNamed('/chat', arguments: users[index]),
           );
         });

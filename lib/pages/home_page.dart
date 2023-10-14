@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
                 child: ClipOval(
                   child: GetX<CurrentUserController>(
                     builder: (controller) => Image.network(
-                      controller.current.value.avatar,
+                      controller.current.value!.avatar,
                       width: 60,
                       fit: BoxFit.cover,
                     ),

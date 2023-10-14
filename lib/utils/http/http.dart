@@ -127,7 +127,7 @@ class Http {
       cancelToken: cancelToken ?? _cancelToken,
     );
 
-    return response.data;
+    return response;
   }
 
   Future post(
@@ -149,7 +149,7 @@ class Http {
       options: requestOptions,
       cancelToken: cancelToken ?? _cancelToken,
     );
-    return response.data;
+    return response;
   }
 
   Future put(
@@ -172,7 +172,7 @@ class Http {
       options: requestOptions,
       cancelToken: cancelToken ?? _cancelToken,
     );
-    return response.data;
+    return response;
   }
 
   Future patch(
@@ -194,7 +194,7 @@ class Http {
       options: requestOptions,
       cancelToken: cancelToken ?? _cancelToken,
     );
-    return response.data;
+    return response;
   }
 
   Future delete(

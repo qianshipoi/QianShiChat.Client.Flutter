@@ -11,17 +11,17 @@ import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+class ChatPage1 extends StatefulWidget {
+  const ChatPage1({super.key});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatPage1> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage1> {
   late Future<List<Message>> _future;
   UserInfo user = Get.arguments;
-  var currentUser = Get.find<CurrentUserController>().current.value;
+  var currentUser = Get.find<CurrentUserController>().current.value!;
   var page = 1;
 
   @override
@@ -42,7 +42,7 @@ class _ChatPageState extends State<ChatPage> {
         : '${user.id}-${currentUser.id}';
 
     var response = await HttpUtils.get("chat/$roomId/history?page=1");
-    var result = GlobalResponse.fromMap(response);
+    var result = GlobalResponse.fromMap(response.data);
     if (!result.succeeded) {
       throw Exception(jsonEncode(result.errors));
     }

@@ -1,10 +1,19 @@
 buildscript {
     ext.kotlin_version = '1.7.10'
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
+        // mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public/' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+        maven { url "https://maven.aliyun.com/repository/spring-plugin" }
+        maven { url "https://maven.aliyun.com/nexus/content/repositories/central/" }
         maven { url 'https://download.flutter.io'}
+        gradlePluginPortal()
+        // mavenCentral()
+        google()
+        // jcenter()
     }
 
     dependencies {
@@ -15,9 +24,19 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
+        // mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public/' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+        maven { url "https://maven.aliyun.com/repository/spring-plugin" }
+        maven { url "https://maven.aliyun.com/nexus/content/repositories/central/" }
+        maven { url 'https://download.flutter.io'}
+        gradlePluginPortal()
+        // mavenCentral()
+        google()
+        // jcenter()
     }
 }
 
