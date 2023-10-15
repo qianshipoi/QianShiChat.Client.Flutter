@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
-import 'package:qianshi_chat/pages/login_page.dart';
+import 'package:qianshi_chat/main.dart';
 
 class AppException implements Exception {
   final String _message;
@@ -53,7 +52,7 @@ class AppException implements Exception {
                 }
               case 401:
                 {
-                  Get.off(const LoginPage());
+                  logout();
                   return UnauthorisedException(errCode!, "没有权限");
                 }
               case 403:

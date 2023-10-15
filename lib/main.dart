@@ -4,14 +4,19 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/locale/locale_message.dart';
+import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/chat_page.dart';
+import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
+import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/stores/friend_store.dart';
 import 'package:qianshi_chat/stores/index.dart';
 import 'package:qianshi_chat/utils/database.dart';
+import 'package:qianshi_chat/utils/global.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 import 'package:qianshi_chat/utils/sputils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 var logger = Logger(
   filter: null,
@@ -24,6 +29,22 @@ var logger = Logger(
     printTime: false,
   ),
 );
+
+late SharedPreferences preferences;
+
+void logout() {
+  preferences.remove(accessTokenKey);
+  preferences.remove(userInfoKey);
+  Get.off(const LoginPage());
+}
+
+void initLoginInfo(String token, UserInfo userInfo) {
+  preferences.setString(accessTokenKey, token);
+  preferences.setString(userInfoKey, userInfo.toJson());
+  Global.accessToken = token;
+  Get.find<CurrentUserController>().current.value = userInfo;
+  Get.find<ChatHubController>().start();
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,13 +65,16 @@ Future<void> initStore() async {
   HttpUtils.init(
     baseUrl: apiBaseUrl,
   );
+
+  preferences = await SharedPreferences.getInstance();
+
   // 历史记录，全局 getx全局注入，
   // await Get.putAsync(() => HistoryService().init());
 
   // init database
   // await Get.putAsync(() => DatabaseService().init());
-
   Get.lazyPut(() => CurrentUserController());
+  Get.lazyPut(() => ChatHubController());
 
   // initMeeduPlayer();
 

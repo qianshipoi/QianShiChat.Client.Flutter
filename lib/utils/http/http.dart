@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/utils/global.dart';
 
 import 'error_interceptor.dart';
@@ -90,7 +89,6 @@ class Http {
     if (accessToken != null) {
       headers = {
         'Authorization': 'Bearer $accessToken',
-        'Client-Type': clientType
       };
     }
     return headers;

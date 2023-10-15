@@ -3,16 +3,11 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
-import 'package:qianshi_chat/stores/current_store.dart';
-import 'package:qianshi_chat/utils/global.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -236,14 +231,8 @@ class _LoginPageState extends State<LoginPage> {
       logger.i(response.headers);
 
       var token = response.headers['x-access-token']!.first;
-
-      var preferences = await SharedPreferences.getInstance();
-      preferences.setString(accessTokenKey, token);
-      Global.accessToken = token;
       var user = UserInfo.fromJson(json.encode(result.data));
-      preferences.setString(userInfoKey, user.toJson());
-
-      Get.find<CurrentUserController>().current.value = user;
+      initLoginInfo(token, user);
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);

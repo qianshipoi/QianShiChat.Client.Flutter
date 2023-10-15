@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/enums/message_type.dart';
 import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
+import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 
@@ -20,34 +20,52 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  late Future _future;
   UserInfo user = Get.arguments;
   var currentUser = Get.find<CurrentUserController>().current.value!;
+  var chatHubController = Get.find<ChatHubController>();
   var page = 1;
   var hasMore = true;
   List<Message> messages = [];
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _future = getHistory();
+    chatHubController.addPrivateChatListener(privateChatListener);
+    getHistory().then((value) => {jumpToBottom()});
+  }
+
+  void privateChatListener(Message message) {
+    setState(() {
+      messages.add(message);
+    });
+    jumpToBottom();
+  }
+
+  jumpToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((duration) =>
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent));
+  }
+
+  @override
+  void dispose() {
+    chatHubController.removePrivateChatListener(privateChatListener);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future refresh() async {
     if (!hasMore) return;
-    setState(() {
-      _future = getHistory();
-    });
+    getHistory();
   }
 
   Future getHistory() async {
     var roomId = currentUser.id < user.id
         ? '${currentUser.id}-${user.id}'
         : '${user.id}-${currentUser.id}';
-    logger.i(roomId);
 
     var response =
-        await HttpUtils.get("chat/personal-$roomId/history?page=$page");
+        await HttpUtils.get("chat/personal-$roomId/history?page=$page&size=15");
     var result = GlobalResponse.fromMap(response.data);
     if (!result.succeeded) {
       throw Exception(jsonEncode(result.errors));
@@ -61,40 +79,18 @@ class _ChatPageState extends State<ChatPage> {
       hasMore = pagedList.hasNext;
       page++;
     });
-    logger.i(data);
-    return data;
   }
 
-  FutureBuilder buildFutureBuilder() {
-    return FutureBuilder(
-        future: _future,
-        builder: (context, AsyncSnapshot async) {
-          if (async.connectionState == ConnectionState.active ||
-              async.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (async.connectionState == ConnectionState.done) {
-            if (async.hasError) {
-              return const Center(
-                child: Text("ERROR"),
-              );
-            } else if (async.hasData) {
-              return RefreshIndicator(
-                  notificationPredicate: (notification) => hasMore,
-                  onRefresh: refresh,
-                  child: buildListView(context, messages));
-            }
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
+  Widget buildFutureBuilder() {
+    return RefreshIndicator(
+        notificationPredicate: (notification) => hasMore,
+        onRefresh: refresh,
+        child: buildListView(context, messages));
   }
 
   Widget buildListView(BuildContext context, List<Message> messages) {
     return ListView.separated(
+        controller: _scrollController,
         separatorBuilder: (BuildContext context, int index) => const SizedBox(
               height: 12,
             ),
@@ -245,8 +241,7 @@ class _ChatPageState extends State<ChatPage> {
         ),
         body: Column(
           children: [
-            Flexible(
-              flex: 1,
+            Expanded(
               child: Container(
                   color: Colors.blueGrey, child: buildFutureBuilder()),
             ),

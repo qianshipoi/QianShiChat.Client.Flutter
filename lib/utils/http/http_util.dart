@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:qianshi_chat/utils/http/http.dart';
 import 'package:qianshi_chat/utils/http/net_cache_interceptor.dart';
@@ -14,11 +16,13 @@ class HttpUtils {
     List<Interceptor>? interceptors,
   }) {
     Http().init(
-      baseUrl: baseUrl,
-      connectTimeout: connectTimeout,
-      receiveTimeout: receiveTimeout,
-      interceptors: interceptors,
-    );
+        baseUrl: baseUrl,
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
+        interceptors: interceptors,
+        headers: {
+          'Client-Type': 'flutter_${Platform.operatingSystem}',
+        });
   }
 
   static void cancelRequests({required CancelToken token}) {
