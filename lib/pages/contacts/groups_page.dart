@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/stores/groups_controller.dart';
+import 'package:qianshi_chat/stores/rooms_controller.dart';
 
 class GroupsPage extends StatefulWidget {
   const GroupsPage({Key? key}) : super(key: key);
@@ -10,6 +12,8 @@ class GroupsPage extends StatefulWidget {
 }
 
 class _GroupsPageState extends State<GroupsPage> {
+  final roomsController = Get.find<RoomsController>();
+
   @override
   Widget build(BuildContext context) {
     return GetX<GroupsController>(
@@ -26,8 +30,15 @@ class _GroupsPageState extends State<GroupsPage> {
             ),
             title: Text(controller.groups[index].name),
             trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () =>
-                Get.toNamed('/chat', arguments: controller.groups[index]),
+            onTap: () async {
+              var room = await roomsController.createRoom(
+                  controller.groups[index].id, MessageSendType.group);
+              if (room == null) {
+                Get.snackbar('提示', '获取房间失败');
+                return;
+              }
+              Get.toNamed('/chat', arguments: room);
+            },
           );
         },
       ),

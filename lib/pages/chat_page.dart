@@ -7,9 +7,11 @@ import 'package:qianshi_chat/models/enums/message_type.dart';
 import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
+import 'package:qianshi_chat/models/room.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
+import 'package:qianshi_chat/stores/users_controller.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 
 class ChatPage extends StatefulWidget {
@@ -20,9 +22,10 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  UserInfo user = Get.arguments;
+  Room room = Get.arguments;
   var currentUser = Get.find<CurrentUserController>().current.value!;
   var chatHubController = Get.find<ChatHubController>();
+  var usersController = Get.find<UsersController>();
   var page = 1;
   var hasMore = true;
   List<Message> messages = [];
@@ -60,20 +63,21 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future _getHistory() async {
-    var roomId = currentUser.id < user.id
-        ? '${currentUser.id}-${user.id}'
-        : '${user.id}-${currentUser.id}';
-
     var response =
-        await HttpUtils.get("chat/personal-$roomId/history?page=$page&size=15");
+        await HttpUtils.get("chat/${room.id}/history?page=$page&size=15");
     var result = GlobalResponse.fromMap(response.data);
     if (!result.succeeded) {
       throw Exception(jsonEncode(result.errors));
     }
     var pagedList = PagedList.fromMap(result.data);
 
-    var listMap = List<Map<String, dynamic>>.from(pagedList.items);
-    var data = listMap.map((e) => Message.fromMap(e)).toList();
+    var data = List<Map<String, dynamic>>.from(pagedList.items)
+        .map((e) => Message.fromMap(e))
+        .toList();
+    for (var element in data) {
+      var user = await usersController.getUserById(element.fromId);
+      element.fromUser = user;
+    }
     setState(() {
       messages.insertAll(0, data);
       hasMore = pagedList.hasNext;
@@ -105,21 +109,18 @@ class _ChatPageState extends State<ChatPage> {
   Widget buildMessageView(BuildContext context, Message message) {
     var isMe = currentUser.id == message.fromId;
     if (message.messageType == MessageType.text) {
-      return buildTextMessageView(message, isMe, isMe ? currentUser : user);
+      return buildTextMessageView(message, isMe, message.fromUser!);
     }
     Attachment attachment = Attachment.fromMap(message.content);
     switch (message.messageType) {
       case MessageType.image:
-        return buildImageMessageView(
-            attachment, isMe, isMe ? currentUser : user);
+        return buildImageMessageView(attachment, isMe, message.fromUser!);
       case MessageType.audio:
-        return buildAudioMessageView(
-            attachment, isMe, isMe ? currentUser : user);
+        return buildAudioMessageView(attachment, isMe, message.fromUser!);
       case MessageType.video:
         return const Text('Video');
       case MessageType.otherFile:
-        return buildOtherFileMessageView(
-            attachment, isMe, isMe ? currentUser : user);
+        return buildOtherFileMessageView(attachment, isMe, message.fromUser!);
       default:
         return const Text('not support message type');
     }
@@ -234,10 +235,9 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    UserInfo user = Get.arguments;
     return Scaffold(
         appBar: AppBar(
-          title: Text(user.nickName),
+          title: Text(room.name ?? ""),
         ),
         body: Column(
           children: [

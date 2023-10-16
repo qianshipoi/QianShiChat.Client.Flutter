@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:qianshi_chat/models/global_response.dart';
-import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/contacts/friend_grouping_page.dart';
 import 'package:qianshi_chat/pages/contacts/friends_page.dart';
 import 'package:qianshi_chat/pages/contacts/groups_page.dart';
 import 'package:qianshi_chat/utils/common_sliver_header_delegate.dart';
-import 'package:qianshi_chat/utils/http/http_util.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -29,17 +24,6 @@ class _ContactsPageState extends State<ContactsPage>
         );
   }
 
-  Future<List<UserInfo>> getFriends() async {
-    var response = await HttpUtils.get("friend");
-    var result = GlobalResponse.fromMap(response.data);
-    if (!result.succeeded) {
-      throw Exception(jsonEncode(result.errors));
-    }
-    List<Map<String, dynamic>> listMap =
-        List<Map<String, dynamic>>.from(result.data);
-    return listMap.map((e) => UserInfo.fromMap(e)).toList();
-  }
-
   @override
   void dispose() {
     _tabController.dispose();
@@ -52,18 +36,22 @@ class _ContactsPageState extends State<ContactsPage>
             islucency: true,
             child: PreferredSize(
                 preferredSize: const Size.fromHeight(120),
-                child: Column(
+                child: ListView(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      alignment: Alignment.center,
-                      child: const Text('新朋友'),
+                    ListTile(
+                      title: const Text('新朋友'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/new_friend');
+                      },
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      alignment: Alignment.center,
-                      child: const Text('群通知'),
-                    ),
+                    ListTile(
+                      title: const Text("群通知"),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/group_notice');
+                      },
+                    )
                   ],
                 ))));
   }

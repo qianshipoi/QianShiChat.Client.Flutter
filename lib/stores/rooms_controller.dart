@@ -67,4 +67,21 @@ class RoomsController extends GetxController {
     }
     this.rooms.value = rooms;
   }
+
+  Future<Room?> createRoom(int toId, MessageSendType type) async {
+    // check room exists
+    var room = rooms.firstWhereOrNull(
+        (element) => element.toId == toId && element.type == type);
+    if (room != null) {
+      rooms.remove(room);
+      rooms.insert(0, room);
+      return room;
+    }
+
+    room = await chatController.getRoom(toId, type);
+    if (room == null) return null;
+    room.fromUser = currentUserController.current.value;
+    rooms.insert(0, room);
+    return room;
+  }
 }

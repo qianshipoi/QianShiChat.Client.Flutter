@@ -6,6 +6,8 @@ import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/locale/locale_message.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/chat_page.dart';
+import 'package:qianshi_chat/pages/contacts/group_notice_page.dart';
+import 'package:qianshi_chat/pages/contacts/new_friend_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
@@ -90,7 +92,9 @@ class MyApp extends StatelessWidget {
       title: appTitle,
       routes: {
         // "/": (context) => const HomePage(),
-        "/chat": (context) => const ChatPage()
+        "/chat": (context) => const ChatPage(),
+        "/new_friend": (context) => const NewFriendPage(),
+        "/group_notice": (context) => const GroupNoticePage(),
       },
       translations: LocaleMessage(),
       locale: const Locale('zh', 'CN'),
