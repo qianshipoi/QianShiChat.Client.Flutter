@@ -3,7 +3,9 @@ import 'dart:core';
 import 'package:get/get.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/main.dart';
+import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/message.dart';
+import 'package:qianshi_chat/models/room.dart';
 import 'package:qianshi_chat/utils/global.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 
@@ -55,5 +57,22 @@ class ChatHubController extends GetxController {
     await _hubConnection.stop();
     isConnection.value = false;
     logger.i("signalr连接断开");
+  }
+
+  Future<List<Room>?> getRooms() async {
+    var stream = _hubConnection.stream('GetRoomsAsync', []);
+    return await stream.map((event) {
+      return Room.fromMap(event as Map<String, dynamic>);
+    }).toList();
+  }
+
+  Future<Room?> getRoom(int toId, MessageSendType type) async {
+    var room = await _hubConnection
+        .invoke('GetRoomAsync', args: <Object>[toId, type.index]);
+    if (room != null) {
+      return Room.fromMap(room as Map<String, dynamic>);
+    } else {
+      return null;
+    }
   }
 }

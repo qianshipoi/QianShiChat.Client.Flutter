@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/pages/contacts_page.dart';
 import 'package:qianshi_chat/pages/found_page.dart';
-import 'package:qianshi_chat/pages/friend_page.dart';
 import 'package:qianshi_chat/pages/message_page.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
+import 'package:qianshi_chat/stores/friends_controller.dart';
+import 'package:qianshi_chat/stores/groups_controller.dart';
+import 'package:qianshi_chat/stores/rooms_controller.dart';
+import 'package:qianshi_chat/stores/users_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,13 +17,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List pages = [const MessagePage(), const FoundPage(), const FriendPage()];
+  List pages = [const MessagePage(), const FoundPage(), const ContactsPage()];
   List<BottomNavigationBarItem> bottomItems = [
     const BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Messages'),
     const BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Found'),
     const BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Friends'),
   ];
   int currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Get.put(UsersController());
+    Get.put(RoomsController());
+    Get.put(GroupsController());
+    Get.put(FriendsController());
+  }
 
   @override
   Widget build(BuildContext context) {

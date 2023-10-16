@@ -7,4 +7,8 @@ enum MessageStatus {
 
   const MessageStatus(this.number);
   final int number;
+
+  static MessageStatus fromValue(int val) {
+    return MessageStatus.values.firstWhere((element) => element.number == val);
+  }
 }

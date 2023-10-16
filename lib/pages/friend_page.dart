@@ -57,7 +57,7 @@ class _FriendPageState extends State<FriendPage> {
             } else if (async.hasData) {
               return RefreshIndicator(
                   onRefresh: refresh,
-                  child: buildListView(context, async.data!));
+                  child: _buildListView(context, async.data!));
             }
           }
           return const Center(
@@ -71,7 +71,7 @@ class _FriendPageState extends State<FriendPage> {
     return buildFutureBuilder();
   }
 
-  buildListView(BuildContext context, List<UserInfo> users) {
+  _buildListView(BuildContext context, List<UserInfo> users) {
     return ListView.builder(
         itemCount: users.length,
         itemBuilder: (context, index) {
@@ -84,14 +84,14 @@ class _FriendPageState extends State<FriendPage> {
               ),
             ),
             title: Text(users[index].nickName),
-            subtitle: buildOnlineStatus(users[index]),
+            subtitle: _buildOnlineStatus(users[index]),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () => Get.toNamed('/chat', arguments: users[index]),
           );
         });
   }
 
-  Widget buildOnlineStatus(UserInfo user) {
+  Widget _buildOnlineStatus(UserInfo user) {
     if (user.isOnline) {
       return const Row(
         children: [
@@ -119,3 +119,4 @@ class _FriendPageState extends State<FriendPage> {
     }
   }
 }
+

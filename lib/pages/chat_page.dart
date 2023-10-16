@@ -31,35 +31,35 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    chatHubController.addPrivateChatListener(privateChatListener);
-    getHistory().then((value) => {jumpToBottom()});
+    chatHubController.addPrivateChatListener(_privateChatListener);
+    _getHistory().then((value) => {_jumpToBottom()});
   }
 
-  void privateChatListener(Message message) {
+  void _privateChatListener(Message message) {
     setState(() {
       messages.add(message);
     });
-    jumpToBottom();
+    _jumpToBottom();
   }
 
-  jumpToBottom() {
+  _jumpToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((duration) =>
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent));
   }
 
   @override
   void dispose() {
-    chatHubController.removePrivateChatListener(privateChatListener);
+    chatHubController.removePrivateChatListener(_privateChatListener);
     _scrollController.dispose();
     super.dispose();
   }
 
-  Future refresh() async {
+  Future _refresh() async {
     if (!hasMore) return;
-    getHistory();
+    _getHistory();
   }
 
-  Future getHistory() async {
+  Future _getHistory() async {
     var roomId = currentUser.id < user.id
         ? '${currentUser.id}-${user.id}'
         : '${user.id}-${currentUser.id}';
@@ -84,7 +84,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget buildFutureBuilder() {
     return RefreshIndicator(
         notificationPredicate: (notification) => hasMore,
-        onRefresh: refresh,
+        onRefresh: _refresh,
         child: buildListView(context, messages));
   }
 
