@@ -59,7 +59,7 @@ class Room {
       lastMessageTime: json['lastMessageTime'],
       lastMessageContent: messageContent,
       fromUser:
-          json['fromUser'] != null ? UserInfo.fromJson(json['fromUser']) : null,
+          json['fromUser'] != null ? UserInfo.fromMap(json['fromUser']) : null,
       toObject: toObject,
     );
   }

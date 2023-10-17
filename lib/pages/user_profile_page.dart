@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart';
 import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
@@ -90,6 +91,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
           onPressed: () async {
             var room = await roomsController.createRoom(
                 user.id, MessageSendType.personal);
+            if (room == null) {
+              Get.snackbar('提示', '创建房间失败');
+              return;
+            }
+            room.fromUser = currentUserController.current.value;
+            room.toObject = user;
             Get.toNamed('/chat', arguments: room);
           },
           child: const Text('发消息'));

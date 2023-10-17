@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/enums/message_type.dart';
 import 'package:qianshi_chat/models/global_response.dart';
@@ -30,6 +31,8 @@ class _ChatPageState extends State<ChatPage> {
   var hasMore = true;
   List<Message> messages = [];
   final _scrollController = ScrollController();
+  final _messageInputController = TextEditingController();
+  bool _notSend = true;
 
   @override
   void initState() {
@@ -55,6 +58,29 @@ class _ChatPageState extends State<ChatPage> {
     chatHubController.removePrivateChatListener(_privateChatListener);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future _sendTextMessage() async {
+    var content = _messageInputController.value.text;
+    if (content.isEmpty) return;
+    logger.i('send message $content');
+    var response = await HttpUtils.post('chat/text', data: {
+      'message': content,
+      'sendType': room.type.number,
+      'toId': room.toObject.id,
+    });
+    var result = GlobalResponse.fromMap(response.data);
+    if (!result.succeeded) {
+      throw Exception(jsonEncode(result.errors));
+    }
+    _messageInputController.clear();
+    var message = Message.fromMap(result.data);
+    message.fromUser = currentUser;
+    logger.i('send message $message');
+    setState(() {
+      messages.add(message);
+      _jumpToBottom();
+    });
   }
 
   Future _refresh() async {
@@ -255,22 +281,41 @@ class _ChatPageState extends State<ChatPage> {
               child: Container(
                   color: Colors.blueGrey, child: buildFutureBuilder()),
             ),
-            const SizedBox(
-              height: 60,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: Row(
-                  children: [
-                    Icon(Icons.file_open_sharp),
-                    Expanded(
-                      child: TextField(),
-                    ),
-                    Icon(Icons.send),
-                  ],
-                ),
-              ),
-            )
+            _buildMessageInputBuilder()
           ],
         ));
+  }
+
+  SizedBox _buildMessageInputBuilder() {
+    return SizedBox(
+      height: 60,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        child: Row(
+          children: [
+            const Icon(Icons.file_open_sharp),
+            Expanded(
+              child: TextField(
+                controller: _messageInputController,
+                onChanged: (value) {
+                  setState(() {
+                    _notSend = value.isEmpty;
+                  });
+                },
+              ),
+            ),
+            AbsorbPointer(
+              absorbing: _notSend,
+              child: IconButton(
+                onPressed: () {
+                  _sendTextMessage();
+                },
+                icon: const Icon(Icons.send),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

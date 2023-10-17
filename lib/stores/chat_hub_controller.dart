@@ -67,12 +67,12 @@ class ChatHubController extends GetxController {
   }
 
   Future<Room?> getRoom(int toId, MessageSendType type) async {
-    var room = await _hubConnection
-        .invoke('GetRoomAsync', args: <Object>[toId, type.index]);
-    if (room != null) {
-      return Room.fromMap(room as Map<String, dynamic>);
-    } else {
-      return null;
+    var result = await _hubConnection
+        .invoke('GetRoomAsync', args: <Object>[toId, type.number]);
+    Room? room;
+    if (result != null) {
+      room = Room.fromMap(result as Map<String, dynamic>);
     }
+    return room;
   }
 }

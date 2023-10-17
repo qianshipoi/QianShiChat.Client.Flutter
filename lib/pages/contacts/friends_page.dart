@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
