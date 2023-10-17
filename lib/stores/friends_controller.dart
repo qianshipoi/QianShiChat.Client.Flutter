@@ -34,4 +34,8 @@ class FriendsController extends GetxController {
         .map((e) => UserInfo.fromMap(e))
         .toList();
   }
+
+  bool isFriend(UserInfo user) {
+    return friends.any((element) => element.id == user.id);
+  }
 }

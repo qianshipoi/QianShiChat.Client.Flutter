@@ -36,14 +36,8 @@ class _FriendsPageState extends State<FriendsPage> {
             title: Text(users[index].nickName),
             subtitle: _buildOnlineStatus(users[index]),
             trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () async {
-              var room = await roomsController.createRoom(
-                  users[index].id, MessageSendType.personal);
-              if (room == null) {
-                Get.snackbar('提示', '获取房间失败');
-                return;
-              }
-              Get.toNamed('/chat', arguments: room);
+            onTap: () {
+              Get.toNamed('/user_profile', arguments: users[index].id);
             },
           );
         });

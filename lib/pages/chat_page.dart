@@ -208,8 +208,13 @@ class _ChatPageState extends State<ChatPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (!isMe)
-          CircleAvatar(
-            backgroundImage: NetworkImage(user.avatar),
+          GestureDetector(
+            onTap: () {
+              Get.toNamed('/user_profile', arguments: user.id);
+            },
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(user.avatar),
+            ),
           ),
         Container(
             constraints: BoxConstraints(
@@ -222,8 +227,13 @@ class _ChatPageState extends State<ChatPage> {
                 borderRadius: BorderRadius.circular(8)),
             child: child),
         if (isMe)
-          CircleAvatar(
-            backgroundImage: NetworkImage(user.avatar),
+          GestureDetector(
+            onTap: () {
+              Get.toNamed('/user_profile', arguments: user.id);
+            },
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(user.avatar),
+            ),
           ),
       ],
     );

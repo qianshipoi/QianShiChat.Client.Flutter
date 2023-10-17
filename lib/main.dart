@@ -10,6 +10,7 @@ import 'package:qianshi_chat/pages/contacts/group_notice_page.dart';
 import 'package:qianshi_chat/pages/contacts/new_friend_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
+import 'package:qianshi_chat/pages/user_profile_page.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/stores/friend_store.dart';
@@ -93,6 +94,7 @@ class MyApp extends StatelessWidget {
       routes: {
         // "/": (context) => const HomePage(),
         "/chat": (context) => const ChatPage(),
+        "/user_profile": (context) => const UserProfilePage(),
         "/new_friend": (context) => const NewFriendPage(),
         "/group_notice": (context) => const GroupNoticePage(),
       },

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qianshi_chat/models/enums/apply_status.dart';
+import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/friend_apply.dart';
 import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
+import 'package:qianshi_chat/stores/rooms_controller.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 
 class NewFriendPage extends StatefulWidget {
@@ -16,6 +19,7 @@ class _NewFriendPageState extends State<NewFriendPage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
   late Future<List<FriendApply>> _applyFuture;
+  final roomsController = Get.find<RoomsController>();
   int beforeLastTime = 0;
   bool hasMore = true;
 
@@ -98,6 +102,10 @@ class _NewFriendPageState extends State<NewFriendPage> {
       child: ListView.builder(
           itemCount: items.length,
           itemBuilder: (context, index) => ListTile(
+                onTap: () {
+                  Get.toNamed('/user_profile',
+                      arguments: items[index].friend.id);
+                },
                 title: Text(items[index].friend.nickName),
                 leading: ClipOval(
                   child: Image.network(
@@ -142,10 +150,17 @@ class _NewFriendPageState extends State<NewFriendPage> {
       // display chat
       return IconButton(
           onPressed: () {},
-          icon: const Icon(
-            Icons.chat,
-            color: Colors.green,
-          ));
+          icon: IconButton(
+              onPressed: () async {
+                var room = await roomsController.createRoom(
+                    item.friend.id, MessageSendType.personal);
+                Get.back();
+                Get.toNamed('/chat', arguments: room);
+              },
+              icon: const Icon(
+                Icons.chat,
+                color: Colors.green,
+              )));
     } else if (item.status == ApplyStatus.rejected) {
       // display rejected
       return const Text('已拒绝');
