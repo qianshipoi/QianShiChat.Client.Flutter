@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qianshi_chat/main.dart';
 
 class CommonSliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   PreferredSize child; //传入preferredsize组件，因为此组件需要固定高度
@@ -12,7 +11,6 @@ class CommonSliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     double mainHeight = maxExtent - shrinkOffset; //动态获取滑动剩余高度
-    logger.i('backgroundColor: $backgroundColor');
     return Container(
       color: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       child: Opacity(
