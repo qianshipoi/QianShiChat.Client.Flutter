@@ -35,6 +35,7 @@ class _ContactsPageState extends State<ContactsPage>
     return SliverPersistentHeader(
         delegate: CommonSliverHeaderDelegate(
             islucency: true,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             child: PreferredSize(
                 preferredSize: const Size.fromHeight(120),
                 child: ListView(

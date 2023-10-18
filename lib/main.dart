@@ -92,6 +92,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: appTitle,
+      darkTheme: ThemeData.dark(),
       routes: {
         "/chat": (context) => const ChatPage(),
         "/user_profile": (context) => const UserProfilePage(),
