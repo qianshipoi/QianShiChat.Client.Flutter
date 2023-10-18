@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/pages/contacts_page.dart';
 import 'package:qianshi_chat/pages/found_page.dart';
 import 'package:qianshi_chat/pages/message_page.dart';
-import 'package:qianshi_chat/stores/current_store.dart';
+import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 import 'package:qianshi_chat/stores/groups_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
@@ -69,6 +70,10 @@ class _HomePageState extends State<HomePage> {
             const ListTile(
               title: Text('Messages'),
               trailing: Icon(Icons.keyboard_arrow_right),
+            ),
+            const ListTile(
+              title: Text("Logout"),
+              onTap: logout,
             )
           ],
         ),

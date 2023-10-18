@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
 import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
-import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
+
+import '../stores/current_user_controller.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});

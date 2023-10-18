@@ -19,7 +19,7 @@ class ChatHubController extends GetxController {
 
   ChatHubController() {
     _hubConnection = HubConnectionBuilder()
-        .withUrl(signalrBaseUrl, options: httpOptions)
+        .withUrl(ApiContants.signalrBaseUrl, options: httpOptions)
         .withAutomaticReconnect()
         .build();
 

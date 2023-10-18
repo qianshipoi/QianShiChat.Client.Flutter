@@ -3,11 +3,12 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qianshi_chat/main.dart';
-import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
-import 'package:qianshi_chat/utils/http/http_util.dart';
+import 'package:qianshi_chat/pages/register_page.dart';
+import 'package:qianshi_chat/providers/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,6 +19,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
+  final _authProvider = Get.find<AuthProvider>();
   var _isObscure = true;
   late String _account, _password;
   Color _eyeColor = Colors.grey;
@@ -216,7 +218,7 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(color: Colors.green),
           ),
           onTap: () {
-            logger.i('去注册');
+            Get.to(() => const RegisterPage());
           },
         )
       ],
@@ -225,27 +227,23 @@ class _LoginPageState extends State<LoginPage> {
 
   Future _doLogin(context) async {
     try {
-      var response = await HttpUtils.post('Auth',
-          data: {"account": _account, "password": generateMD5(_password)});
-      var result = GlobalResponse.fromMap(response.data);
-      logger.i(response.headers);
-
-      var token = response.headers['x-access-token']!.first;
-      var user = UserInfo.fromJson(json.encode(result.data));
+      var response = await _authProvider.login(_account, _password);
+      if (!response.isOk) {
+        Get.snackbar("Error", "账号或密码错误", backgroundColor: Colors.white);
+        return;
+      }
+      var result = response.body!;
+      if (!result.succeeded) {
+        Get.snackbar("Error", "账号或密码错误", backgroundColor: Colors.white);
+        return;
+      }
+      var token = response.headers!['x-access-token']!;
+      var user = UserInfo.fromMap(result.data);
       initLoginInfo(token, user);
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const HomePage()),
-          (route) => false);
+      Get.off(() => const HomePage());
     } catch (e) {
       logger.e(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: const Text('账号或密码错误'),
-            action: SnackBarAction(
-              label: '取消',
-              onPressed: () {},
-            )),
-      );
+      Get.snackbar("Error", "账号或密码错误", backgroundColor: Colors.white);
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 
 class PhotoViewPage extends StatelessWidget {
@@ -51,9 +52,7 @@ class PhotoViewPage extends StatelessWidget {
                   size: 30,
                   color: Colors.white,
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: Get.back,
               ),
             ),
           ],

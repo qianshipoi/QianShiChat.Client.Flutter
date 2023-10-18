@@ -10,8 +10,9 @@ import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
 import 'package:qianshi_chat/models/room.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
+import 'package:qianshi_chat/pages/photo_view_page.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
-import 'package:qianshi_chat/stores/current_store.dart';
+import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 
@@ -225,7 +226,22 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildImageMessageView(
       Attachment attachment, bool isMe, UserInfo user) {
-    return buildBaseMessageView(isMe, user, Image.network(attachment.rawPath));
+    return buildBaseMessageView(
+        isMe,
+        user,
+        GestureDetector(
+            onTap: () {
+              Get.to(() => PhotoViewPage(
+                    imageProvider: NetworkImage(attachment.rawPath),
+                    loadingChild:
+                        const Center(child: CircularProgressIndicator()),
+                    heroTag: attachment.name,
+                    backgroundDecoration:
+                        const BoxDecoration(color: Colors.black),
+                  ));
+            },
+            child:
+                Image.network(attachment.previewPath ?? attachment.rawPath)));
   }
 
   Widget buildBaseMessageView(bool isMe, UserInfo user, Widget child) {

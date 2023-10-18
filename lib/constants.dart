@@ -1,9 +1,13 @@
+import 'dart:io';
+
 const appTitle = "QianShiChat";
 
-const baseUrl =
-    "https://chat-api.kuriyama.top/"; // "https://chat-api.kuriyama.top/";
-const apiBaseUrl = "${baseUrl}api/";
-const signalrBaseUrl = "${baseUrl}Hubs/Chat";
-const clientType = "filter_client";
 const accessTokenKey = "token";
 const userInfoKey = "current_user";
+
+class ApiContants {
+  static const baseUrl = "https://chat-api.kuriyama.top/";
+  static const apiBaseUrl = "${baseUrl}api/";
+  static const signalrBaseUrl = "${baseUrl}Hubs/Chat";
+  static String clientType = "flutter_${Platform.operatingSystem}";
+}

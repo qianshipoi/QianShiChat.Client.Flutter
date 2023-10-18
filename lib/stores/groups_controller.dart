@@ -3,8 +3,9 @@ import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/group.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
-import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
+
+import 'current_user_controller.dart';
 
 class GroupsController extends GetxController {
   final chatController = Get.find<ChatHubController>();

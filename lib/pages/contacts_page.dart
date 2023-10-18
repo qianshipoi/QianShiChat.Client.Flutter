@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qianshi_chat/pages/contacts/friend_grouping_page.dart';
 import 'package:qianshi_chat/pages/contacts/friends_page.dart';
 import 'package:qianshi_chat/pages/contacts/groups_page.dart';
@@ -42,14 +43,14 @@ class _ContactsPageState extends State<ContactsPage>
                       title: const Text('新朋友'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        Navigator.pushNamed(context, '/new_friend');
+                        Get.toNamed('/new_friend');
                       },
                     ),
                     ListTile(
                       title: const Text("群通知"),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        Navigator.pushNamed(context, '/group_notice');
+                        Get.toNamed('/group_notice');
                       },
                     )
                   ],

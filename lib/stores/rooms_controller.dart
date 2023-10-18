@@ -3,9 +3,10 @@ import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/models/room.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
-import 'package:qianshi_chat/stores/current_store.dart';
 import 'package:qianshi_chat/stores/groups_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
+
+import 'current_user_controller.dart';
 
 class RoomsController extends GetxController {
   final chatController = Get.find<ChatHubController>();
