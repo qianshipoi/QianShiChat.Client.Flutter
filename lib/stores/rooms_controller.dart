@@ -42,7 +42,23 @@ class RoomsController extends GetxController {
   Future<void> _addNewRoom(Message message) async {
     var room = await chatController.getRoom(message.toId, message.sendType);
     if (room == null) return;
-    room.fromUser = currentUserController.current.value;
+    var user = await usersController.getUserById(message.fromId);
+    room.fromUser = user;
+    if (message.sendType == MessageSendType.personal) {
+      var toUser = await usersController.getUserById(message.toId);
+      if (toUser == null) return;
+      room.toObject = toUser;
+      room.name = toUser.nickName;
+      room.avatar = toUser.avatar;
+    } else if (message.sendType == MessageSendType.group) {
+      var group = await Get.find<GroupsController>().getGroupById(message.toId);
+      if (group == null) return;
+      room.toObject = group;
+      room.name = group.name;
+      room.avatar = group.avatar;
+    } else {
+      return;
+    }
     rooms.insert(0, room);
   }
 

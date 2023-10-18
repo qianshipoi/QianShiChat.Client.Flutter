@@ -95,6 +95,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
               Get.snackbar('提示', '创建房间失败');
               return;
             }
+            room.avatar = user.avatar;
+            room.name = user.nickName;
             room.fromUser = currentUserController.current.value;
             room.toObject = user;
             Get.toNamed('/chat', arguments: room);

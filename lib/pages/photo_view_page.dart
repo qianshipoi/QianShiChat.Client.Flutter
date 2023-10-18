@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 
-class PhotoViewPage extends StatelessWidget {
+class PhotoViewPage extends StatefulWidget {
   final ImageProvider imageProvider;
   final Widget loadingChild;
   final BoxDecoration backgroundDecoration;
@@ -20,9 +21,27 @@ class PhotoViewPage extends StatelessWidget {
       required this.heroTag});
 
   @override
+  State<PhotoViewPage> createState() => _PhotoViewPageState();
+}
+
+class _PhotoViewPageState extends State<PhotoViewPage> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         constraints: BoxConstraints.expand(
           height: MediaQuery.of(context).size.height,
         ),
@@ -34,12 +53,12 @@ class PhotoViewPage extends StatelessWidget {
               bottom: 0,
               right: 0,
               child: PhotoView(
-                imageProvider: imageProvider,
-                loadingBuilder: (context, event) => loadingChild,
-                backgroundDecoration: backgroundDecoration,
-                minScale: minScale,
-                maxScale: maxScale,
-                heroAttributes: PhotoViewHeroAttributes(tag: heroTag),
+                imageProvider: widget.imageProvider,
+                loadingBuilder: (context, event) => widget.loadingChild,
+                backgroundDecoration: widget.backgroundDecoration,
+                minScale: widget.minScale,
+                maxScale: widget.maxScale,
+                heroAttributes: PhotoViewHeroAttributes(tag: widget.heroTag),
                 enableRotation: true,
               ),
             ),
