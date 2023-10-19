@@ -7,8 +7,10 @@ import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/chat_page.dart';
 import 'package:qianshi_chat/pages/contacts/group_notice_page.dart';
 import 'package:qianshi_chat/pages/contacts/new_friend_page.dart';
+import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
+import 'package:qianshi_chat/pages/test_page.dart';
 import 'package:qianshi_chat/pages/user_profile_page.dart';
 import 'package:qianshi_chat/providers/attachment_provider.dart';
 import 'package:qianshi_chat/providers/auth_provider.dart';
@@ -93,6 +95,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: appTitle,
       darkTheme: ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
       routes: {
         "/chat": (context) => const ChatPage(),
         "/user_profile": (context) => const UserProfilePage(),

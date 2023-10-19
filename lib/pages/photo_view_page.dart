@@ -28,12 +28,12 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
 
@@ -41,7 +41,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+        // margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         constraints: BoxConstraints.expand(
           height: MediaQuery.of(context).size.height,
         ),
