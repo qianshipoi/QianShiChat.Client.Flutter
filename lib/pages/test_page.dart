@@ -97,7 +97,6 @@ class _TestPageState extends State<TestPage>
   void _captureWidget() async {
     final boundary = _boundaryKey.currentContext?.findRenderObject();
     if (boundary?.debugNeedsPaint ?? true) {
-      print("Waiting for boundary to be painted.");
       await Future.delayed(const Duration(milliseconds: 20));
       return _captureWidget();
     }
