@@ -10,6 +10,7 @@ import 'package:qianshi_chat/pages/home/message_page.dart';
 import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 import 'package:qianshi_chat/stores/groups_controller.dart';
+import 'package:qianshi_chat/stores/index_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
 import 'package:qianshi_chat/utils/circle_image_painter.dart';
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage>
   late Animation<double> _animation;
   final GlobalKey _keyGreen = GlobalKey();
   late Offset _startOffset;
+  final indexController = Get.find<IndexController>();
 
   @override
   void initState() {
@@ -94,7 +96,13 @@ class _HomePageState extends State<HomePage>
 
   Future<void> _switchTheme() async {
     await _captureWidget();
-    Get.changeTheme(Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
+    // Get.changeTheme(Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
+
+    if (indexController.useSystemTheme.value) {
+      indexController.useSystemTheme.value = false;
+    } else {
+      indexController.useDarkTheme.value = !indexController.useDarkTheme.value;
+    }
   }
 
   @override
@@ -117,32 +125,13 @@ class _HomePageState extends State<HomePage>
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  DrawerHeader(
-                    child: Container(
-                      alignment: Alignment.topLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ClipOval(
-                            child: GetX<CurrentUserController>(
-                              builder: (controller) => Image.network(
-                                controller.current.value!.avatar,
-                                width: 60,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                              key: _keyGreen,
-                              onPressed: () => _switchTheme(),
-                              icon: const Icon(Icons.camera_alt_outlined))
-                        ],
-                      ),
-                    ),
-                  ),
-                  const ListTile(
-                    title: Text('Messages'),
-                    trailing: Icon(Icons.keyboard_arrow_right),
+                  _buildDrawerHeader(),
+                  ListTile(
+                    onTap: () {
+                      Get.toNamed('/settings');
+                    },
+                    title: const Text('Settings'),
+                    trailing: const Icon(Icons.keyboard_arrow_right),
                   ),
                   const ListTile(
                     title: Text("Logout"),
@@ -163,6 +152,38 @@ class _HomePageState extends State<HomePage>
           ),
           _buildImageFromBytes()
         ],
+      ),
+    );
+  }
+
+  DrawerHeader _buildDrawerHeader() {
+    return DrawerHeader(
+      child: Container(
+        alignment: Alignment.topLeft,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ClipOval(
+              child: GetX<CurrentUserController>(
+                builder: (controller) => GestureDetector(
+                  onTap: () {
+                    Get.toNamed('/user_profile',
+                        arguments: controller.current.value!.id);
+                  },
+                  child: Image.network(
+                    controller.current.value!.avatar,
+                    width: 60,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+                key: _keyGreen,
+                onPressed: () => _switchTheme(),
+                icon: const Icon(Icons.brightness_4))
+          ],
+        ),
       ),
     );
   }

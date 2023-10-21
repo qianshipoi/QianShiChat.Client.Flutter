@@ -8,6 +8,7 @@ import 'package:qianshi_chat/pages/chat_page.dart';
 import 'package:qianshi_chat/pages/contacts/group_notice_page.dart';
 import 'package:qianshi_chat/pages/contacts/new_friend_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
+import 'package:qianshi_chat/pages/settings_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
 import 'package:qianshi_chat/pages/user_profile_page.dart';
 import 'package:qianshi_chat/providers/attachment_provider.dart';
@@ -19,6 +20,7 @@ import 'package:qianshi_chat/providers/group_provider.dart';
 import 'package:qianshi_chat/providers/user_provider.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_user_controller.dart';
+import 'package:qianshi_chat/stores/index_controller.dart';
 import 'package:qianshi_chat/utils/database.dart';
 import 'package:qianshi_chat/utils/global.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
@@ -40,6 +42,7 @@ var logger = Logger(
 late SharedPreferences preferences;
 
 void logout() {
+  Get.find<ChatHubController>().stop();
   preferences.remove(accessTokenKey);
   preferences.remove(userInfoKey);
   Get.currentRoute == "/login"
@@ -73,6 +76,7 @@ Future<void> initStore() async {
 
   Get.put(CurrentUserController());
   Get.put(ChatHubController());
+  Get.put(IndexController());
   Get.lazyPut(() => AttachmentProvider(), fenix: true);
   Get.lazyPut(() => AuthProvider(), fenix: true);
   Get.lazyPut(() => AvatarProvider(), fenix: true);
@@ -92,13 +96,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: appTitle,
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData.dark(useMaterial3: true),
       debugShowCheckedModeBanner: false,
       routes: {
         "/chat": (context) => const ChatPage(),
         "/user_profile": (context) => const UserProfilePage(),
         "/new_friend": (context) => const NewFriendPage(),
         "/group_notice": (context) => const GroupNoticePage(),
+        "/settings": (context) => const SettingsPage(),
       },
       translations: LocaleMessage(),
       locale: const Locale('zh', 'CN'),

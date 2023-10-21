@@ -103,15 +103,24 @@ class _ContactsPageState extends State<ContactsPage>
                 child: TabBar(
                   controller: _tabController,
                   indicatorSize: TabBarIndicatorSize.label,
-                  tabs: const <Widget>[
+                  tabs: <Widget>[
                     Tab(
-                      child: Text('好友'),
+                      child: Text(
+                        '好友',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                     Tab(
-                      child: Text('分组'),
+                      child: Text(
+                        '分组',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                     Tab(
-                      child: Text('群聊'),
+                      child: Text(
+                        '群聊',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                   ],
                 ))));
