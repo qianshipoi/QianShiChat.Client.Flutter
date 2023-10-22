@@ -91,7 +91,6 @@ Future<void> initStore() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -106,7 +105,7 @@ class MyApp extends StatelessWidget {
         "/settings": (context) => const SettingsPage(),
       },
       translations: LocaleMessage(),
-      locale: Get.deviceLocale,
+      locale: Get.find<IndexController>().currentLocale.value,
       fallbackLocale: const Locale('en', 'US'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

@@ -15,6 +15,7 @@ class IndexController extends GetxController {
     Language(displayName: "简体中文", languageCode: "zh", countryCode: "CN")
   ];
   final currentLanguage = Rx<Language?>(null);
+  final currentLocale = Rx<Locale?>(Get.locale);
 
   @override
   void onInit() {
@@ -33,8 +34,9 @@ class IndexController extends GetxController {
           currentLocale.countryCode == callback.countryCode) {
         return;
       }
-
-      Get.updateLocale(Locale(callback.languageCode, callback.countryCode));
+      this.currentLocale.value =
+          Locale(callback.languageCode, callback.countryCode);
+      Get.updateLocale(this.currentLocale.value!);
       SpUtil().setJSON("current_locale", callback.toJson());
     });
 
@@ -45,9 +47,12 @@ class IndexController extends GetxController {
     }
     try {
       var language = Language.fromJson(localeMap);
-      currentLanguage.value = languages.firstWhereOrNull((element) =>
+      var l = languages.firstWhereOrNull((element) =>
           element.languageCode == language.languageCode &&
           element.countryCode == language.countryCode);
+      if (l != null) {
+        currentLanguage.value = l;
+      }
     } catch (e) {
       logger.e(e);
       return;
