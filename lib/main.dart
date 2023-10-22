@@ -106,7 +106,7 @@ class MyApp extends StatelessWidget {
         "/settings": (context) => const SettingsPage(),
       },
       translations: LocaleMessage(),
-      locale: const Locale('zh', 'CN'),
+      locale: Get.deviceLocale,
       fallbackLocale: const Locale('en', 'US'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

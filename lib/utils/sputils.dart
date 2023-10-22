@@ -37,4 +37,12 @@ class SpUtil {
   Future<bool> remove(String key) {
     return prefs!.remove(key);
   }
+
+  String? getString(String key) {
+    return prefs!.getString(key);
+  }
+
+  Future<bool> setString(String key, String val) {
+    return prefs!.setString(key, val);
+  }
 }

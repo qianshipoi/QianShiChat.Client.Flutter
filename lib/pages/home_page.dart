@@ -5,8 +5,8 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/pages/home/contacts_page.dart';
-import 'package:qianshi_chat/pages/home/found_page.dart';
 import 'package:qianshi_chat/pages/home/message_page.dart';
+import 'package:qianshi_chat/pages/home/my_page.dart';
 import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 import 'package:qianshi_chat/stores/groups_controller.dart';
@@ -24,20 +24,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  List pages = [const MessagePage(), const FoundPage(), const ContactsPage()];
+  List pages = [const MessagePage(), const ContactsPage(), const MyPage()];
   List<BottomNavigationBarItem> bottomItems = [
     const BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Messages'),
-    const BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Found'),
     const BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Friends'),
+    const BottomNavigationBarItem(icon: Icon(Icons.person), label: 'My'),
   ];
-  int currentPage = 0;
+  int _currentPage = 0;
   final _boundaryKey = GlobalKey();
   ui.Image? _image;
   late AnimationController _controller;
   late Animation<double> _animation;
   final GlobalKey _keyGreen = GlobalKey();
   late Offset _startOffset;
-  final indexController = Get.find<IndexController>();
+  final _indexController = Get.find<IndexController>();
 
   @override
   void initState() {
@@ -98,10 +98,11 @@ class _HomePageState extends State<HomePage>
     await _captureWidget();
     // Get.changeTheme(Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
 
-    if (indexController.useSystemTheme.value) {
-      indexController.useSystemTheme.value = false;
+    if (_indexController.useSystemTheme.value) {
+      _indexController.useSystemTheme.value = false;
     } else {
-      indexController.useDarkTheme.value = !indexController.useDarkTheme.value;
+      _indexController.useDarkTheme.value =
+          !_indexController.useDarkTheme.value;
     }
   }
 
@@ -113,13 +114,8 @@ class _HomePageState extends State<HomePage>
         children: [
           Scaffold(
             appBar: AppBar(
-              title: const Text('Messages'),
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.search),
-                ),
-              ],
+              title: Text(bottomItems[_currentPage].label!),
+              centerTitle: true,
             ),
             drawer: Drawer(
               child: ListView(
@@ -142,13 +138,13 @@ class _HomePageState extends State<HomePage>
             ),
             bottomNavigationBar: BottomNavigationBar(
                 items: bottomItems,
-                currentIndex: currentPage,
+                currentIndex: _currentPage,
                 onTap: (index) {
                   setState(() {
-                    currentPage = index;
+                    _currentPage = index;
                   });
                 }),
-            body: pages[currentPage],
+            body: pages[_currentPage],
           ),
           _buildImageFromBytes()
         ],

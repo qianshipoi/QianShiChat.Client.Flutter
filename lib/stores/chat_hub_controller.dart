@@ -48,12 +48,14 @@ class ChatHubController extends GetxController {
   }
 
   Future<void> start() async {
+    if (isConnection.value) return;
     await _hubConnection.start();
     isConnection.value = true;
     logger.i("signalr连接成功");
   }
 
   Future<void> stop() async {
+    if (!isConnection.value) return;
     await _hubConnection.stop();
     isConnection.value = false;
     logger.i("signalr连接断开");

@@ -1,14 +1,14 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/pages/home_page.dart';
 import 'package:qianshi_chat/pages/register_page.dart';
 import 'package:qianshi_chat/providers/auth_provider.dart';
+import 'package:qianshi_chat/stores/index_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -37,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       'icon': Icons.account_balance,
     }
   ];
+  final _indexController = Get.find<IndexController>();
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 30),
                 buildPasswordTextField(context),
                 buildForgetPasswordText(context),
+                buildLanguageSelect(context),
                 const SizedBox(height: 50),
                 buildLoginButton(context),
                 const SizedBox(height: 30),
@@ -68,11 +70,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget buildTitle() {
-    return const Padding(
-      padding: EdgeInsets.all(8.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Text(
-        'Login',
-        style: TextStyle(fontSize: 42),
+        Globalization.login.tr,
+        style: const TextStyle(fontSize: 42),
       ),
     );
   }
@@ -93,13 +95,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget buildAccountTextField() {
     return TextFormField(
-      decoration: const InputDecoration(labelText: 'Account'),
+      decoration: InputDecoration(labelText: Globalization.account.tr),
       validator: (v) {
         if (v!.trim().isEmpty) {
-          return 'Account is empty';
+          return Globalization.accountCanNotBeEmpty.tr;
         }
         if (v.length < 3) {
-          return 'Account is too short';
+          return Globalization.accountIsTooShort.tr;
         }
         return null;
       },
@@ -113,12 +115,12 @@ class _LoginPageState extends State<LoginPage> {
       onSaved: (v) => _password = v!,
       validator: (value) {
         if (value!.isEmpty) {
-          return 'Password is empty';
+          return Globalization.passwordCanNotBeEmpty.tr;
         }
         return null;
       },
       decoration: InputDecoration(
-          labelText: 'Password',
+          labelText: Globalization.password.tr,
           suffixIcon: IconButton(
               onPressed: () {
                 setState(() {
@@ -141,12 +143,10 @@ class _LoginPageState extends State<LoginPage> {
       child: Align(
         alignment: Alignment.centerRight,
         child: TextButton(
-          onPressed: () {
-            logger.i('忘记密码');
-          },
-          child: const Text(
-            '忘记密码？',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+          onPressed: () {},
+          child: Text(
+            Globalization.forgetPassword.tr,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
         ),
       ),
@@ -158,15 +158,9 @@ class _LoginPageState extends State<LoginPage> {
       height: 45,
       width: 270,
       child: ElevatedButton(
-        style: ButtonStyle(
-          // 设置圆角
-          shape: MaterialStateProperty.all(
-              const StadiumBorder(side: BorderSide(style: BorderStyle.none))),
-        ),
-        child: Text('Login',
-            style: Theme.of(context).primaryTextTheme.headlineLarge),
+        child: Text(Globalization.login.tr,
+            style: Theme.of(context).primaryTextTheme.headlineSmall),
         onPressed: () {
-          // 表单校验通过才会继续执行
           if ((_formKey.currentState as FormState).validate()) {
             (_formKey.currentState as FormState).save();
             _doLogin(context);
@@ -177,9 +171,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget buildOtherLoginText() {
-    return const Center(
-        child:
-            Text("其他账号登录", style: TextStyle(color: Colors.grey, fontSize: 14)));
+    return Center(
+        child: Text(Globalization.otherAccountLogin.tr,
+            style: const TextStyle(color: Colors.grey, fontSize: 14)));
   }
 
   Widget buildOtherMethod(BuildContext context) {
@@ -191,9 +185,10 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                            content: Text('${item['title']}登录'),
+                            content:
+                                Text(item['title'] + Globalization.login.tr),
                             action: SnackBarAction(
-                              label: '取消',
+                              label: Globalization.actionCancel.tr,
                               onPressed: () {},
                             )),
                       );
@@ -211,11 +206,14 @@ class _LoginPageState extends State<LoginPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text('没有账号？'),
+        Text(Globalization.noAccount.tr),
+        const SizedBox(
+          width: 4,
+        ),
         GestureDetector(
-          child: const Text(
-            '点击注册',
-            style: TextStyle(color: Colors.green),
+          child: Text(
+            Globalization.clickToRegister.tr,
+            style: const TextStyle(color: Colors.green),
           ),
           onTap: () {
             Get.to(() => const RegisterPage());
@@ -229,28 +227,39 @@ class _LoginPageState extends State<LoginPage> {
     try {
       var response = await _authProvider.login(_account, _password);
       if (!response.isOk) {
-        Get.snackbar("Error", "账号或密码错误", backgroundColor: Colors.white);
-        return;
+        throw ErrorDescription(response.toString());
       }
       var result = response.body!;
       if (!result.succeeded) {
-        Get.snackbar("Error", "账号或密码错误", backgroundColor: Colors.white);
-        return;
+        throw ErrorDescription(response.toString());
       }
-      var token = response.headers!['x-access-token']!;
+      var token = response.headers![ApiContants.accessTokenHeaderKey]!;
       var user = UserInfo.fromMap(result.data);
       initLoginInfo(token, user);
       Get.off(() => const HomePage());
     } catch (e) {
       logger.e(e);
-      Get.snackbar("Error", "账号或密码错误", backgroundColor: Colors.white);
+      Get.snackbar(Globalization.error.tr,
+          Globalization.errorAccountNoExistsOrIncorrectPassword.tr,
+          backgroundColor: Theme.of(context).primaryColor);
     }
   }
 
-  ///使用md5加密
-  String generateMD5(String data) {
-    Uint8List content = const Utf8Encoder().convert(data);
-    Digest digest = md5.convert(content);
-    return digest.toString();
+  Widget buildLanguageSelect(BuildContext context) {
+    return DropdownButtonFormField<Language>(
+        decoration: InputDecoration(
+          labelText: Globalization.language.tr,
+        ),
+        value: _indexController.currentLanguage.value,
+        items: _indexController.languages
+            .map((e) => DropdownMenuItem<Language>(
+                  value: e,
+                  child: Text(e.displayName),
+                ))
+            .toList(),
+        onChanged: (val) {
+          if (val == null) return;
+          _indexController.currentLanguage.value = val;
+        });
   }
 }

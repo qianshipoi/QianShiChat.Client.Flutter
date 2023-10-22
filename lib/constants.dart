@@ -10,4 +10,5 @@ class ApiContants {
   static const apiBaseUrl = "${baseUrl}api/";
   static const signalrBaseUrl = "${baseUrl}Hubs/Chat";
   static String clientType = "flutter_${Platform.operatingSystem}";
+  static const accessTokenHeaderKey = "x-access-token";
 }
