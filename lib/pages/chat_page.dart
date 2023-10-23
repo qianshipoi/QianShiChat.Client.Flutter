@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/enums/message_type.dart';
@@ -14,6 +15,7 @@ import 'package:qianshi_chat/pages/photo_view_page.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
+import 'package:qianshi_chat/utils/common_util.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 
 class ChatPage extends StatefulWidget {
@@ -168,26 +170,10 @@ class _ChatPageState extends State<ChatPage> {
         ));
   }
 
-  String formatFileSize(int size) {
-    if (size < 1024) {
-      return '${size}B';
-    } else if (size < 1024 * 1024) {
-      return '${(size / 1024).toStringAsFixed(2)}KB';
-    } else if (size < 1024 * 1024 * 1024) {
-      return '${(size / (1024 * 1024)).toStringAsFixed(2)}MB';
-    } else {
-      return '${(size / (1024 * 1024 * 1024)).toStringAsFixed(2)}GB';
-    }
-  }
-
-  String getFileSuffix(String fileName) {
-    return fileName.substring(fileName.lastIndexOf('.') + 1);
-  }
-
   Widget buildOtherFileMessageView(
       Attachment attachment, bool isMe, UserInfo user) {
-    var size = formatFileSize(attachment.size);
-    var suffix = getFileSuffix(attachment.name);
+    var size = CommonUtil.formatFileSize(attachment.size);
+    var suffix = CommonUtil.getFileSuffix(attachment.name);
 
     return buildBaseMessageView(
         isMe,
@@ -252,7 +238,7 @@ class _ChatPageState extends State<ChatPage> {
         if (!isMe)
           GestureDetector(
             onTap: () {
-              Get.toNamed('/user_profile', arguments: user.id);
+              Get.toNamed(RouterContants.userProfile, arguments: user.id);
             },
             child: CircleAvatar(
               backgroundImage: NetworkImage(user.avatar),
@@ -271,7 +257,7 @@ class _ChatPageState extends State<ChatPage> {
         if (isMe)
           GestureDetector(
             onTap: () {
-              Get.toNamed('/user_profile', arguments: user.id);
+              Get.toNamed(RouterContants.userProfile, arguments: user.id);
             },
             child: CircleAvatar(
               backgroundImage: NetworkImage(user.avatar),

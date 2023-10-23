@@ -34,7 +34,6 @@ class _FoundPageState extends State<FoundPage>
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
-            //写类似于SliverAppBar中的title部分。可以自定义图标，标题，内容
             SliverPersistentHeader(
                 delegate: CommonSliverHeaderDelegate(
                     islucency: true,
@@ -58,7 +57,7 @@ class _FoundPageState extends State<FoundPage>
                               child: const Icon(Icons.add),
                             ),
                           ],
-                        )))), //tabbar悬停
+                        )))),
             SliverPersistentHeader(
                 floating: true,
                 pinned: true,

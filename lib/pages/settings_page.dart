@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/stores/index_controller.dart';
+import 'package:qianshi_chat/utils/capture_util.dart';
 import 'package:qianshi_chat/utils/circle_image_painter.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -20,6 +21,7 @@ class _SettingsPageState extends State<SettingsPage>
   late AnimationController _controller;
   late Animation<double> _animation;
   final GlobalKey _keyGreen = GlobalKey();
+  final GlobalKey _systemThemeKey = GlobalKey();
   late Offset _startOffset;
   final _indexController = Get.find<IndexController>();
 
@@ -46,36 +48,25 @@ class _SettingsPageState extends State<SettingsPage>
     super.dispose();
   }
 
-  Future<void> _captureWidget() async {
-    final boundary = _boundaryKey.currentContext?.findRenderObject();
-    if (boundary?.debugNeedsPaint ?? true) {
-      await Future.delayed(const Duration(milliseconds: 20));
-      return await _captureWidget();
+  Future<void> _captureWidget(GlobalKey key) async {
+    var image = await CaptureUtil.captureWidget(
+        _boundaryKey, MediaQuery.of(context).devicePixelRatio);
+    if (image == null) {
+      return;
     }
-
-    if (boundary != null && boundary is RenderRepaintBoundary) {
-      final RenderBox renderBox =
-          _keyGreen.currentContext?.findRenderObject() as RenderBox;
-      final sizeGreen = renderBox.size;
-
-      //获取当前屏幕位置
-      final positionGreen = renderBox.localToGlobal(Offset.zero);
-      _startOffset = Offset(positionGreen.dx + sizeGreen.width / 2,
-          positionGreen.dy + sizeGreen.height / 2);
-
-      final image = await boundary.toImage(
-          pixelRatio: MediaQuery.of(context).devicePixelRatio);
-      setState(() {
-        _image = image;
-      });
-      Future.delayed(const Duration(seconds: 0), () {
-        _controller.forward();
-      });
+    if (key.currentContext != null) {
+      _startOffset = CaptureUtil.getWidgetOffset(key);
     }
+    setState(() {
+      _image = image;
+    });
+    Future.delayed(Duration.zero, () {
+      _controller.forward();
+    });
   }
 
   Future<void> _switchTheme() async {
-    await _captureWidget();
+    await _captureWidget(_keyGreen);
     _indexController.useDarkTheme.value = !_indexController.useDarkTheme.value;
   }
 
@@ -87,22 +78,44 @@ class _SettingsPageState extends State<SettingsPage>
         children: [
           Scaffold(
               appBar: AppBar(
-                title: const Text('SettingsPage'),
+                title: Text(Globalization.settings.tr),
               ),
               body: ListView(
                 children: [
                   Obx(
                     () => ListTile(
-                      title: const Text("Use system theme"),
+                      title: Text(Globalization.useSystemTheme.tr),
                       trailing: Switch(
+                        key: _systemThemeKey,
                         value: _indexController.useSystemTheme.value,
-                        onChanged: (value) {
+                        onChanged: (value) async {
+                          await _captureWidget(_systemThemeKey);
                           _indexController.useSystemTheme.value = value;
                         },
                       ),
                     ),
                   ),
                   Obx(() => _buildCustomTheme()),
+                  ListTile(
+                    title: Text(Globalization.language.tr),
+                    trailing: GetX<IndexController>(
+                      builder: (controller) {
+                        return DropdownButton(
+                          value: controller.currentLanguage.value,
+                          items: controller.languages
+                              .map((e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e.displayName),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            if (value == null) return;
+                            controller.currentLanguage.value = value;
+                          },
+                        );
+                      },
+                    ),
+                  )
                 ],
               )),
           _buildImageFromBytes(),
@@ -116,7 +129,7 @@ class _SettingsPageState extends State<SettingsPage>
       return const SizedBox.shrink();
     }
     return ListTile(
-      title: const Text('Theme'),
+      title: Text(Globalization.useDarkTheme.tr),
       trailing: Switch(
         key: _keyGreen,
         value: _indexController.useDarkTheme.value,

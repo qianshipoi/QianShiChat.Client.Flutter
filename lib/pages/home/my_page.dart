@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/stores/current_user_controller.dart';
 
 class MyPage extends StatefulWidget {
@@ -19,9 +21,9 @@ class _MyPageState extends State<MyPage> {
             _buildUserInfo(context),
             ListTile(
               onTap: () {
-                Get.toNamed("/settings");
+                Get.toNamed(RouterContants.settings);
               },
-              title: const Text("设置"),
+              title: Text(Globalization.settings.tr),
               leading: const Icon(Icons.settings),
               trailing: const Icon(Icons.keyboard_arrow_right),
             ),
@@ -41,7 +43,7 @@ class _MyPageState extends State<MyPage> {
                 fit: BoxFit.cover,
                 controller.current.value!.avatar,
                 errorBuilder: (context, error, stackTrace) {
-                  return const Text("网络异常");
+                  return Text(Globalization.errorNetwork.tr);
                 },
               ),
             ),

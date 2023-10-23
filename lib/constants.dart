@@ -12,3 +12,13 @@ class ApiContants {
   static String clientType = "flutter_${Platform.operatingSystem}";
   static const accessTokenHeaderKey = "x-access-token";
 }
+
+class RouterContants {
+  static const settings = "/settings";
+  static const login = "/login";
+  static const register = "/register";
+  static const chat = "/chat";
+  static const userProfile = "/user_profile";
+  static const newFriend = "/new_friend";
+  static const groupNotice = "/group_notice";
+}

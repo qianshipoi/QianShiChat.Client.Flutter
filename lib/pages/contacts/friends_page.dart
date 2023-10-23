@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
@@ -36,7 +37,8 @@ class _FriendsPageState extends State<FriendsPage> {
             subtitle: _buildOnlineStatus(users[index]),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
-              Get.toNamed('/user_profile', arguments: users[index].id);
+              Get.toNamed(RouterContants.userProfile,
+                  arguments: users[index].id);
             },
           );
         });

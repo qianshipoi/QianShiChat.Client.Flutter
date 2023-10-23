@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/pages/contacts/friend_grouping_page.dart';
 import 'package:qianshi_chat/pages/contacts/friends_page.dart';
 import 'package:qianshi_chat/pages/contacts/groups_page.dart';
@@ -19,10 +21,7 @@ class _ContactsPageState extends State<ContactsPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-        vsync: this, // 动画效果的异步处理
-        length: 3 // tab 个数
-        );
+    _tabController = TabController(vsync: this, length: 3);
   }
 
   @override
@@ -41,17 +40,17 @@ class _ContactsPageState extends State<ContactsPage>
                 child: ListView(
                   children: [
                     ListTile(
-                      title: const Text('新朋友'),
+                      title: Text(Globalization.newFriend.tr),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        Get.toNamed('/new_friend');
+                        Get.toNamed(RouterContants.newFriend);
                       },
                     ),
                     ListTile(
-                      title: const Text("群通知"),
+                      title: Text(Globalization.groupNotice.tr),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        Get.toNamed('/group_notice');
+                        Get.toNamed(RouterContants.groupNotice);
                       },
                     )
                   ],
@@ -65,19 +64,8 @@ class _ContactsPageState extends State<ContactsPage>
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
-            //写类似于SliverAppBar中的title部分。可以自定义图标，标题，内容
             _buildHeader(),
             _buildTabsBar(),
-            // SliverGrid(
-            //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            //       crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 3),
-            //   delegate:
-            //       SliverChildBuilderDelegate((BuildContext context, int index) {
-            //     return Container(
-            //       color: Colors.primaries[index % Colors.primaries.length],
-            //     );
-            //   }, childCount: 20),
-            // )
           ];
         },
         body: TabBarView(
@@ -106,19 +94,19 @@ class _ContactsPageState extends State<ContactsPage>
                   tabs: <Widget>[
                     Tab(
                       child: Text(
-                        '好友',
+                        Globalization.firend.tr,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                     Tab(
                       child: Text(
-                        '分组',
+                        Globalization.grouping.tr,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                     Tab(
                       child: Text(
-                        '群聊',
+                        Globalization.group.tr,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),

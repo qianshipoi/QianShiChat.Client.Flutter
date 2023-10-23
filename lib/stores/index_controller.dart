@@ -83,6 +83,7 @@ class IndexController extends GetxController {
       if (useSystemTheme.value) {
         useSystemTheme.value = false;
       } else {
+        if (Get.isDarkMode == isDark) return;
         Get.changeThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
       }
     });

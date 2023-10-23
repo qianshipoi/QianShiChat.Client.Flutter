@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
+import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
-
-import '../stores/current_user_controller.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -24,7 +25,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Future<UserInfo> _getUserInfo() async {
     var userInfo = await usersController.getUserById(userId);
-    if (userInfo == null) throw Exception('用户不存在');
+    if (userInfo == null) throw Exception(Globalization.errorUserNotExists);
     return userInfo;
   }
 
@@ -32,7 +33,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('用户资料'),
+        title: Text(Globalization.userProfile.tr),
       ),
       body: FutureBuilder<UserInfo>(
           future: _getUserInfo(),
@@ -92,18 +93,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
             var room = await roomsController.createRoom(
                 user.id, MessageSendType.personal);
             if (room == null) {
-              Get.snackbar('提示', '创建房间失败');
+              Get.snackbar(Globalization.error.tr, Globalization.errorNetwork);
               return;
             }
             room.avatar = user.avatar;
             room.name = user.nickName;
             room.fromUser = currentUserController.current.value;
             room.toObject = user;
-            Get.toNamed('/chat', arguments: room);
+            Get.toNamed(RouterContants.chat, arguments: room);
           },
-          child: const Text('发消息'));
+          child: Text(Globalization.sendMessage.tr));
     } else {
-      return ElevatedButton(onPressed: () {}, child: const Text('加好友'));
+      return ElevatedButton(
+          onPressed: () {}, child: Text(Globalization.addFriend.tr));
     }
   }
 }

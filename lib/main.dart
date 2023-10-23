@@ -45,9 +45,9 @@ void logout() {
   Get.find<ChatHubController>().stop();
   preferences.remove(accessTokenKey);
   preferences.remove(userInfoKey);
-  Get.currentRoute == "/login"
+  Get.currentRoute == RouterContants.login
       ? null
-      : Get.off(() => const LoginPage(), routeName: '/login');
+      : Get.off(() => const LoginPage(), routeName: RouterContants.login);
 }
 
 void initLoginInfo(String token, UserInfo userInfo) {
@@ -98,11 +98,11 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(useMaterial3: true),
       debugShowCheckedModeBanner: false,
       routes: {
-        "/chat": (context) => const ChatPage(),
-        "/user_profile": (context) => const UserProfilePage(),
-        "/new_friend": (context) => const NewFriendPage(),
-        "/group_notice": (context) => const GroupNoticePage(),
-        "/settings": (context) => const SettingsPage(),
+        RouterContants.chat: (context) => const ChatPage(),
+        RouterContants.userProfile: (context) => const UserProfilePage(),
+        RouterContants.newFriend: (context) => const NewFriendPage(),
+        RouterContants.groupNotice: (context) => const GroupNoticePage(),
+        RouterContants.settings: (context) => const SettingsPage(),
       },
       translations: LocaleMessage(),
       locale: Get.find<IndexController>().currentLocale.value,

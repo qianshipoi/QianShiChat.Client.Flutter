@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 
 class FileDownloadPage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _FileDownloadPageState extends State<FileDownloadPage> {
           ElevatedButton.icon(
               onPressed: () {},
               icon: const Icon(Icons.download),
-              label: const Text("Download")),
+              label: Text(Globalization.actionDownload.tr)),
         ]),
       ),
     );

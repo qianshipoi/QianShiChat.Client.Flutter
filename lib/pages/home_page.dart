@@ -1,8 +1,9 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/pages/home/contacts_page.dart';
 import 'package:qianshi_chat/pages/home/message_page.dart';
@@ -13,6 +14,7 @@ import 'package:qianshi_chat/stores/groups_controller.dart';
 import 'package:qianshi_chat/stores/index_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
+import 'package:qianshi_chat/utils/capture_util.dart';
 import 'package:qianshi_chat/utils/circle_image_painter.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,11 +26,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  List pages = [const MessagePage(), const ContactsPage(), const MyPage()];
+  final pages = [const MessagePage(), const ContactsPage(), const MyPage()];
   List<BottomNavigationBarItem> bottomItems = [
-    const BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Messages'),
-    const BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Friends'),
-    const BottomNavigationBarItem(icon: Icon(Icons.person), label: 'My'),
+    BottomNavigationBarItem(
+        icon: const Icon(Icons.message), label: Globalization.message.tr),
+    BottomNavigationBarItem(
+        icon: const Icon(Icons.people), label: Globalization.contacts.tr),
+    BottomNavigationBarItem(
+        icon: const Icon(Icons.person), label: Globalization.my.tr),
   ];
   int _currentPage = 0;
   final _boundaryKey = GlobalKey();
@@ -67,39 +72,30 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> _captureWidget() async {
-    final boundary = _boundaryKey.currentContext?.findRenderObject();
-    if (boundary?.debugNeedsPaint ?? true) {
-      await Future.delayed(const Duration(milliseconds: 20));
-      return await _captureWidget();
+    var image = await CaptureUtil.captureWidget(
+        _boundaryKey, MediaQuery.of(context).devicePixelRatio);
+    if (image == null) {
+      return;
     }
-
-    if (boundary != null && boundary is RenderRepaintBoundary) {
-      final RenderBox renderBox =
-          _keyGreen.currentContext?.findRenderObject() as RenderBox;
-      final sizeGreen = renderBox.size;
-
-      //获取当前屏幕位置
-      final positionGreen = renderBox.localToGlobal(Offset.zero);
-      _startOffset = Offset(positionGreen.dx + sizeGreen.width / 2,
-          positionGreen.dy + sizeGreen.height / 2);
-
-      final image = await boundary.toImage(
-          pixelRatio: MediaQuery.of(context).devicePixelRatio);
-      setState(() {
-        _image = image;
-      });
-      Future.delayed(const Duration(seconds: 0), () {
-        _controller.forward();
-      });
-    }
+    _startOffset = CaptureUtil.getWidgetOffset(_keyGreen);
+    setState(() {
+      _image = image;
+    });
+    Future.delayed(Duration.zero, () {
+      _controller.forward();
+    });
   }
 
   Future<void> _switchTheme() async {
     await _captureWidget();
-    // Get.changeTheme(Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
-
     if (_indexController.useSystemTheme.value) {
+      var isDarkTheme = Get.isDarkMode;
       _indexController.useSystemTheme.value = false;
+      if (isDarkTheme) {
+        _indexController.useDarkTheme.value = false;
+      } else {
+        _indexController.useDarkTheme.value = true;
+      }
     } else {
       _indexController.useDarkTheme.value =
           !_indexController.useDarkTheme.value;
@@ -124,13 +120,13 @@ class _HomePageState extends State<HomePage>
                   _buildDrawerHeader(),
                   ListTile(
                     onTap: () {
-                      Get.toNamed('/settings');
+                      Get.toNamed(RouterContants.settings);
                     },
-                    title: const Text('Settings'),
+                    title: Text(Globalization.settings.tr),
                     trailing: const Icon(Icons.keyboard_arrow_right),
                   ),
-                  const ListTile(
-                    title: Text("Logout"),
+                  ListTile(
+                    title: Text(Globalization.login.tr),
                     onTap: logout,
                   )
                 ],
@@ -163,7 +159,7 @@ class _HomePageState extends State<HomePage>
               child: GetX<CurrentUserController>(
                 builder: (controller) => GestureDetector(
                   onTap: () {
-                    Get.toNamed('/user_profile',
+                    Get.toNamed(RouterContants.userProfile,
                         arguments: controller.current.value!.id);
                   },
                   child: Image.network(

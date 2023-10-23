@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
+import 'package:qianshi_chat/utils/common_util.dart';
 
 class MessagePage extends StatefulWidget {
   const MessagePage({super.key});
@@ -11,31 +13,6 @@ class MessagePage extends StatefulWidget {
 
 class _MessagePageState extends State<MessagePage> {
   final roomsController = Get.find<RoomsController>();
-
-  String _timestampToTime(int timestamp) {
-    var date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    var now = DateTime.now();
-    var diff = now.difference(date);
-    if (diff.inDays > 0) {
-      return '${date.month}-${date.day}';
-    } else if (diff.inHours > 0) {
-      return '${diff.inHours} hours ago';
-    } else if (diff.inMinutes > 0) {
-      return '${diff.inMinutes} minutes ago';
-    } else {
-      return 'just now';
-    }
-  }
-
-  String _formatContent(dynamic content) {
-    if (content is String) {
-      return content;
-    } else if (content is Map) {
-      return '[${content['type']}]';
-    } else {
-      return '';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +29,13 @@ class _MessagePageState extends State<MessagePage> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  title: Text(room.name ?? ""),
-                  subtitle: Text(_formatContent(room.lastMessageContent)),
-                  trailing: Text(_timestampToTime(room.lastMessageTime)),
+                  title: Text(room.name!),
+                  subtitle: Text(
+                      CommonUtil.formatMessageContent(room.lastMessageContent)),
+                  trailing:
+                      Text(CommonUtil.timestampToTime(room.lastMessageTime)),
                   onTap: () {
-                    Get.toNamed('/chat', arguments: room);
+                    Get.toNamed(RouterContants.chat, arguments: room);
                   },
                 );
               },
