@@ -12,6 +12,7 @@ import 'package:signalr_netcore/signalr_client.dart';
 class ChatHubController extends GetxController {
   final httpOptions = HttpConnectionOptions(
     accessTokenFactory: () => Future(() => Global.accessToken!),
+    requestTimeout: 10000
   );
   late HubConnection _hubConnection;
   var isConnection = false.obs;

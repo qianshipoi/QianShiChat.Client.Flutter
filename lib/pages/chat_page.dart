@@ -1,21 +1,26 @@
 import 'dart:convert';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/attachment.dart';
+import 'package:qianshi_chat/models/enums/message_status.dart';
 import 'package:qianshi_chat/models/enums/message_type.dart';
 import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
 import 'package:qianshi_chat/models/room.dart';
-import 'package:qianshi_chat/models/userinfo.dart';
-import 'package:qianshi_chat/pages/photo_view_page.dart';
+import 'package:qianshi_chat/pages/chat/audio_message.dart';
+import 'package:qianshi_chat/pages/chat/image_message.dart';
+import 'package:qianshi_chat/pages/chat/other_file_message.dart';
+import 'package:qianshi_chat/pages/chat/text_message.dart';
+import 'package:qianshi_chat/pages/chat/video_message.dart';
+import 'package:qianshi_chat/providers/attachment_provider.dart';
+import 'package:qianshi_chat/providers/chat_provider.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
-import 'package:qianshi_chat/utils/common_util.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 
 class ChatPage extends StatefulWidget {
@@ -30,12 +35,16 @@ class _ChatPageState extends State<ChatPage> {
   var currentUser = Get.find<CurrentUserController>().current.value!;
   var chatHubController = Get.find<ChatHubController>();
   var usersController = Get.find<UsersController>();
+  var attachmentProvider = Get.find<AttachmentProvider>();
+  var chatProvider = Get.find<ChatProvider>();
   var page = 1;
   var hasMore = true;
   List<Message> messages = [];
   final _scrollController = ScrollController();
   final _messageInputController = TextEditingController();
   bool _notSend = true;
+  bool _audioInput = false;
+  bool _displayEmoji = false;
 
   @override
   void initState() {
@@ -137,138 +146,22 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildMessageView(BuildContext context, Message message) {
     var isMe = currentUser.id == message.fromId;
+    var user = isMe ? currentUser : message.fromUser!;
     if (message.messageType == MessageType.text) {
-      return buildTextMessageView(message, isMe, message.fromUser!);
+      return TextMessage(isMe: isMe, user: user, message: message);
     }
-    Attachment attachment = Attachment.fromMap(message.content);
     switch (message.messageType) {
       case MessageType.image:
-        return buildImageMessageView(attachment, isMe, message.fromUser!);
+        return ImageMessage(isMe: isMe, user: user, message: message);
       case MessageType.audio:
-        return buildAudioMessageView(attachment, isMe, message.fromUser!);
+        return AudioMessage(isMe: isMe, user: user, message: message);
       case MessageType.video:
-        return const Text('Video');
+        return VideoMessage(isMe: isMe, user: user, message: message);
       case MessageType.otherFile:
-        return buildOtherFileMessageView(attachment, isMe, message.fromUser!);
+        return OtherFileMessage(isMe: isMe, user: user, message: message);
       default:
         return const Text('not support message type');
     }
-  }
-
-  Widget buildVideoMessageView(
-      Attachment attachment, bool isMe, UserInfo user) {
-    return buildBaseMessageView(isMe, user, const Text('Video'));
-  }
-
-  Widget buildAudioMessageView(Attachment arguments, bool isMe, UserInfo user) {
-    return buildBaseMessageView(
-        isMe,
-        user,
-        const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [Icon(Icons.play_arrow), Text('...'), Text('00:00')],
-        ));
-  }
-
-  Widget buildOtherFileMessageView(
-      Attachment attachment, bool isMe, UserInfo user) {
-    var size = CommonUtil.formatFileSize(attachment.size);
-    var suffix = CommonUtil.getFileSuffix(attachment.name);
-
-    return buildBaseMessageView(
-        isMe,
-        user,
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(attachment.name, style: const TextStyle(fontSize: 16)),
-                const SizedBox(
-                  height: 8,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('size: '),
-                    Text(size),
-                  ],
-                )
-              ],
-            ),
-            Container(
-              margin: const EdgeInsets.only(left: 16),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(suffix),
-            ),
-          ],
-        ));
-  }
-
-  Widget buildImageMessageView(
-      Attachment attachment, bool isMe, UserInfo user) {
-    return buildBaseMessageView(
-        isMe,
-        user,
-        GestureDetector(
-            onTap: () {
-              Get.to(() => PhotoViewPage(
-                    imageProvider: NetworkImage(attachment.rawPath),
-                    loadingChild:
-                        const Center(child: CircularProgressIndicator()),
-                    heroTag: attachment.name,
-                    backgroundDecoration:
-                        const BoxDecoration(color: Colors.black),
-                  ));
-            },
-            child:
-                Image.network(attachment.previewPath ?? attachment.rawPath)));
-  }
-
-  Widget buildBaseMessageView(bool isMe, UserInfo user, Widget child) {
-    return Row(
-      mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (!isMe)
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(RouterContants.userProfile, arguments: user.id);
-            },
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(user.avatar),
-            ),
-          ),
-        Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width - 96,
-            ),
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: isMe ? Colors.blue : Colors.grey,
-                borderRadius: BorderRadius.circular(8)),
-            child: child),
-        if (isMe)
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(RouterContants.userProfile, arguments: user.id);
-            },
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(user.avatar),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget buildTextMessageView(Message message, bool isMe, UserInfo user) {
-    return buildBaseMessageView(isMe, user, Text(message.content));
   }
 
   @override
@@ -288,36 +181,153 @@ class _ChatPageState extends State<ChatPage> {
         ));
   }
 
-  SizedBox _buildMessageInputBuilder() {
-    return SizedBox(
-      height: 60,
+  Widget _buildMessageInputBuilder() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 60, maxHeight: 200),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.file_open_sharp),
-            Expanded(
-              child: TextField(
-                controller: _messageInputController,
-                onChanged: (value) {
-                  setState(() {
-                    _notSend = value.isEmpty;
-                  });
-                },
-              ),
+            Row(
+              children: [
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _audioInput = !_audioInput;
+                      });
+                    },
+                    icon: Icon(
+                        _audioInput ? Icons.keyboard : Icons.multitrack_audio)),
+                Expanded(
+                  child: _audioInput
+                      ? ElevatedButton(
+                          onPressed: () {}, child: const Text("按住说话"))
+                      : TextField(
+                          controller: _messageInputController,
+                          onChanged: (value) {
+                            setState(() {
+                              _notSend = value.isEmpty;
+                            });
+                          },
+                        ),
+                ),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _displayEmoji = !_displayEmoji;
+                        if (_displayEmoji) {
+                          FocusScope.of(context).requestFocus(_focusNode);
+                        }
+                      });
+                    },
+                    icon: const Icon(Icons.emoji_emotions)),
+                _notSend
+                    ? IconButton(onPressed: () {}, icon: const Icon(Icons.add))
+                    : ElevatedButton(
+                        onPressed: () {
+                          _sendTextMessage();
+                        },
+                        child: const Text("发送")),
+              ],
             ),
-            AbsorbPointer(
-              absorbing: _notSend,
-              child: IconButton(
-                onPressed: () {
-                  _sendTextMessage();
-                },
-                icon: const Icon(Icons.send),
-              ),
-            ),
+            _buildEmojiView(),
           ],
         ),
       ),
     );
+  }
+
+  final _focusNode = FocusNode();
+  final _emojiList = [
+    '😀',
+    '😄',
+    '😄',
+    '😁',
+    '😆',
+    '😅',
+    '🤣',
+    '😂',
+    '🙂',
+    '🙃'
+  ];
+
+  Widget _buildEmojiView() {
+    if (!_displayEmoji) {
+      return const SizedBox.shrink();
+    }
+    return Expanded(
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 6, mainAxisSpacing: 8, crossAxisSpacing: 8),
+        itemCount: _emojiList.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+              onTap: () {
+                _messageInputController.text += _emojiList[index];
+              },
+              child: Center(child: Text(_emojiList[index])));
+        },
+      ),
+    );
+  }
+
+  Future<void> _filePicker() async {
+    var result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
+    var file = result.files.first;
+
+    var attachment = await _uploadAttachment(file.path!);
+    if (attachment == null) return;
+
+    setState(() {
+      messages.add(_sendAttachmentMessage(attachment));
+    });
+  }
+
+  Message _sendAttachmentMessage(Attachment attachment) {
+    var message = Message(
+        id: DateTime.now().millisecondsSinceEpoch,
+        roomId: room.id,
+        createTime: DateTime.now().millisecondsSinceEpoch,
+        attachments: [attachment],
+        status: MessageStatus.sending,
+        messageType: MessageType.otherFile,
+        content: attachment.toMap(),
+        fromId: currentUser.id,
+        fromUser: currentUser,
+        toId: room.toId,
+        sendType: room.type);
+
+    chatProvider.sendFile(room.toId, attachment.id, room.type).then((response) {
+      if (response.hasError) {
+        message.status = MessageStatus.failed;
+        logger.e(response.statusText);
+        return;
+      }
+      var result = response.body!;
+      if (!result.succeeded) {
+        message.status = MessageStatus.failed;
+        return;
+      }
+      var returnMessage = Message.fromMap(result.data);
+      message.id = returnMessage.id;
+      message.status = MessageStatus.succeeded;
+      message.createTime = returnMessage.createTime;
+      message.messageType = returnMessage.messageType;
+    });
+
+    return message;
+  }
+
+  Future<Attachment?> _uploadAttachment(String filepath) async {
+    var response =
+        await attachmentProvider.upload(filepath, (double progressValue) {});
+
+    if (response.hasError) {
+      logger.e(response.statusText);
+      return null;
+    }
+    return Attachment.fromMap(response.body!.data);
   }
 }
