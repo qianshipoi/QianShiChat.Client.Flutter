@@ -65,9 +65,7 @@ Future<void> main() async {
 }
 
 Future<void> initStore() async {
-  // 初始化本地存储类
   await SpUtil().init();
-  // 初始化request类
   HttpUtils.init(
     baseUrl: ApiContants.apiBaseUrl,
   );
@@ -85,7 +83,6 @@ Future<void> initStore() async {
   Get.lazyPut(() => GroupProvider(), fenix: true);
   Get.lazyPut(() => UserProvider(), fenix: true);
 
-  // initMeeduPlayer();
   await DBProvider.db.initDB();
 }
 

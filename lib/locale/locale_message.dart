@@ -40,6 +40,10 @@ class LocaleMessage extends Translations {
           Globalization.firend: "Friend",
           Globalization.grouping: "Grouping",
           Globalization.group: "Group",
+          Globalization.accepted: "Accepted",
+          Globalization.rejected: "Rejected",
+          Globalization.ignored: "Ignored",
+          Globalization.noNewInformationYet: "No new information yet",
         },
         "zh_CN": {
           Globalization.language: "语言",
@@ -76,6 +80,10 @@ class LocaleMessage extends Translations {
           Globalization.firend: "好友",
           Globalization.grouping: "分组",
           Globalization.group: "群聊",
+          Globalization.accepted: "已接受",
+          Globalization.rejected: "已拒绝",
+          Globalization.ignored: "已忽略",
+          Globalization.noNewInformationYet: "暂无新信息",
         },
       };
 }

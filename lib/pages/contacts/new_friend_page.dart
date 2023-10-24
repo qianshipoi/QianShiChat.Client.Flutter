@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/enums/apply_status.dart';
 import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/friend_apply.dart';
@@ -64,7 +66,7 @@ class _NewFriendPageState extends State<NewFriendPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('新的朋友'),
+        title: Text(Globalization.newFriend.tr),
       ),
       body: _buildFutureBuilder(),
     );
@@ -80,8 +82,8 @@ class _NewFriendPageState extends State<NewFriendPage> {
               child: Text(snapshot.error.toString()),
             );
           } else if (snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text('暂无新的朋友'),
+            return Center(
+              child: Text(Globalization.noNewInformationYet.tr),
             );
           } else {
             return _buildListView(snapshot.data!);
@@ -103,7 +105,7 @@ class _NewFriendPageState extends State<NewFriendPage> {
           itemCount: items.length,
           itemBuilder: (context, index) => ListTile(
                 onTap: () {
-                  Get.toNamed('/user_profile',
+                  Get.toNamed(RouterContants.userProfile,
                       arguments: items[index].friend.id);
                 },
                 title: Text(items[index].friend.nickName),
@@ -122,7 +124,6 @@ class _NewFriendPageState extends State<NewFriendPage> {
 
   Widget _buildTrailing(FriendApply item) {
     if (item.status == ApplyStatus.applied) {
-      // diaplay pass and reject and ignore
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -147,7 +148,6 @@ class _NewFriendPageState extends State<NewFriendPage> {
         ],
       );
     } else if (item.status == ApplyStatus.passed) {
-      // display chat
       return IconButton(
           onPressed: () {},
           icon: IconButton(
@@ -155,18 +155,16 @@ class _NewFriendPageState extends State<NewFriendPage> {
                 var room = await roomsController.createRoom(
                     item.friend.id, MessageSendType.personal);
                 Get.back();
-                Get.toNamed('/chat', arguments: room);
+                Get.toNamed(RouterContants.chat, arguments: room);
               },
               icon: const Icon(
                 Icons.chat,
                 color: Colors.green,
               )));
     } else if (item.status == ApplyStatus.rejected) {
-      // display rejected
-      return const Text('已拒绝');
+      return Text(Globalization.rejected.tr);
     } else if (item.status == ApplyStatus.ignored) {
-      // display ignore
-      return const Text('已忽略');
+      return Text(Globalization.ignored.tr);
     } else {
       return const SizedBox.shrink();
     }

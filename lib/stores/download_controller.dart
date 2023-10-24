@@ -6,8 +6,4 @@ class Download {
   Download({required this.name, required this.url});
 }
 
-class DownloadController extends GetxController {
-
-  
-
-}
+class DownloadController extends GetxController {}

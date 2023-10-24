@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/stores/groups_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
@@ -34,10 +36,11 @@ class _GroupsPageState extends State<GroupsPage> {
               var room = await roomsController.createRoom(
                   controller.groups[index].id, MessageSendType.group);
               if (room == null) {
-                Get.snackbar('提示', '获取房间失败');
+                Get.snackbar(
+                    Globalization.error.tr, Globalization.errorNetwork.tr);
                 return;
               }
-              Get.toNamed('/chat', arguments: room);
+              Get.toNamed(RouterContants.chat, arguments: room);
             },
           );
         },

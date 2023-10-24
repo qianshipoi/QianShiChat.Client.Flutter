@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/enums/apply_status.dart';
 import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/group_apply.dart';
@@ -22,7 +24,6 @@ class _GroupNoticePageState extends State<GroupNoticePage> {
   @override
   void initState() {
     super.initState();
-
     setState(() {
       _applyFuture = _getApplyList();
     });
@@ -60,7 +61,7 @@ class _GroupNoticePageState extends State<GroupNoticePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('群消息'),
+        title: Text(Globalization.groupNotice.tr),
       ),
       body: _buildFutureBuilder(),
     );
@@ -76,8 +77,8 @@ class _GroupNoticePageState extends State<GroupNoticePage> {
               child: Text(snapshot.error.toString()),
             );
           } else if (snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text('暂无新的消息'),
+            return Center(
+              child: Text(Globalization.noNewInformationYet.tr),
             );
           } else {
             return _buildListView(snapshot.data!);
@@ -114,7 +115,6 @@ class _GroupNoticePageState extends State<GroupNoticePage> {
 
   Widget _buildTrailing(GroupApply item) {
     if (item.status == ApplyStatus.applied) {
-      // diaplay pass and reject and ignore
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -139,7 +139,6 @@ class _GroupNoticePageState extends State<GroupNoticePage> {
         ],
       );
     } else if (item.status == ApplyStatus.passed) {
-      // display chat
       return IconButton(
           onPressed: () {},
           icon: const Icon(
@@ -147,11 +146,9 @@ class _GroupNoticePageState extends State<GroupNoticePage> {
             color: Colors.green,
           ));
     } else if (item.status == ApplyStatus.rejected) {
-      // display rejected
-      return const Text('已拒绝');
+      return Text(Globalization.rejected.tr);
     } else if (item.status == ApplyStatus.ignored) {
-      // display ignore
-      return const Text('已忽略');
+      return Text(Globalization.ignored.tr);
     } else {
       return const SizedBox.shrink();
     }

@@ -12,12 +12,18 @@ class Globalization {
   static const String newFriend = "newFriend";
   static const String groupNotice = "groupNotice";
 
+  static const String rejected = "rejected";
+  static const String accepted = "accepted";
+  static const String ignored = "ignored";
+
   static const String firend = "firend";
   static const String grouping = "grouping";
   static const String group = "group";
 
   static const String online = "online";
   static const String offline = "offline";
+
+  static const String noNewInformationYet = "noNewInformationYet";
 
   static const String language = "language";
   static const String english = "english";

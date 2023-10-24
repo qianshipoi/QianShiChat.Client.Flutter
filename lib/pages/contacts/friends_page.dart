@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_chat/constants.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
@@ -46,27 +47,27 @@ class _FriendsPageState extends State<FriendsPage> {
 
   Widget _buildOnlineStatus(UserInfo user) {
     if (user.isOnline) {
-      return const Row(
+      return Row(
         children: [
-          Icon(
+          const Icon(
             Icons.circle,
             color: Colors.green,
             size: 14,
           ),
-          SizedBox(
+          const SizedBox(
             width: 4,
           ),
-          Text('在线'),
+          Text(Globalization.online.tr),
         ],
       );
     } else {
-      return const Row(
+      return Row(
         children: [
-          Icon(Icons.circle, color: Colors.grey, size: 14),
-          SizedBox(
+          const Icon(Icons.circle, color: Colors.grey, size: 14),
+          const SizedBox(
             width: 4,
           ),
-          Text('离线'),
+          Text(Globalization.offline.tr),
         ],
       );
     }
