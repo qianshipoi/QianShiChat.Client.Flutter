@@ -45,6 +45,20 @@ class _ChatPageState extends State<ChatPage> {
   bool _notSend = true;
   bool _audioInput = false;
   bool _displayEmoji = false;
+  bool _displayMoreAction = false;
+  final _focusNode = FocusNode();
+  final _emojiList = [
+    '😀',
+    '😄',
+    '😄',
+    '😁',
+    '😆',
+    '😅',
+    '🤣',
+    '😂',
+    '🙂',
+    '🙃'
+  ];
 
   @override
   void initState() {
@@ -223,7 +237,16 @@ class _ChatPageState extends State<ChatPage> {
                     },
                     icon: const Icon(Icons.emoji_emotions)),
                 _notSend
-                    ? IconButton(onPressed: () {}, icon: const Icon(Icons.add))
+                    ? IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _displayMoreAction = !_displayMoreAction;
+                            if (_displayMoreAction) {
+                              FocusScope.of(context).requestFocus(_focusNode);
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.add))
                     : ElevatedButton(
                         onPressed: () {
                           _sendTextMessage();
@@ -237,20 +260,6 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
-
-  final _focusNode = FocusNode();
-  final _emojiList = [
-    '😀',
-    '😄',
-    '😄',
-    '😁',
-    '😆',
-    '😅',
-    '🤣',
-    '😂',
-    '🙂',
-    '🙃'
-  ];
 
   Widget _buildEmojiView() {
     if (!_displayEmoji) {
