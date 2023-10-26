@@ -6,11 +6,11 @@ import 'package:qianshi_chat/providers/api_base_provider.dart';
 class ChatProvider extends ApiBaseProvider {
   Future<Response<GlobalResponse>> history(
     String roomId,
-    int pahe, {
+    int page, {
     int size = 20,
   }) {
     return get<GlobalResponse>('chat/$roomId/history', query: {
-      'page': pahe,
+      'page': page,
       'size': size,
     });
   }

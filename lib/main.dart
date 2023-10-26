@@ -4,6 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/locale/locale_message.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
+import 'package:qianshi_chat/pages/apply_friend_page.dart';
+import 'package:qianshi_chat/pages/apply_group_page.dart';
 import 'package:qianshi_chat/pages/chat_page.dart';
 import 'package:qianshi_chat/pages/contacts/group_notice_page.dart';
 import 'package:qianshi_chat/pages/contacts/new_friend_page.dart';
@@ -100,6 +102,8 @@ class MyApp extends StatelessWidget {
         RouterContants.newFriend: (context) => const NewFriendPage(),
         RouterContants.groupNotice: (context) => const GroupNoticePage(),
         RouterContants.settings: (context) => const SettingsPage(),
+        RouterContants.applyFriend: (context) => const ApplyFriendPage(),
+        RouterContants.applyGroup: (context) => const ApplyGroupPage(),
       },
       translations: LocaleMessage(),
       locale: Get.find<IndexController>().currentLocale.value,

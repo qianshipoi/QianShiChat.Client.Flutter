@@ -1,7 +1,6 @@
 import 'dart:io';
 
 const appTitle = "QianShiChat";
-
 const accessTokenKey = "token";
 const userInfoKey = "current_user";
 
@@ -21,4 +20,10 @@ class RouterContants {
   static const userProfile = "/user_profile";
   static const newFriend = "/new_friend";
   static const groupNotice = "/group_notice";
+  static const applyFriend = "/apply_friend";
+  static const applyGroup = "/apply_group";
+}
+
+class AssetsContants {
+  static const chatLottie = "assets/lottie/chat.json";
 }

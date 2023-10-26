@@ -7,7 +7,6 @@ import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/enums/message_status.dart';
 import 'package:qianshi_chat/models/enums/message_type.dart';
-import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
 import 'package:qianshi_chat/models/room.dart';
@@ -21,7 +20,6 @@ import 'package:qianshi_chat/providers/chat_provider.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
-import 'package:qianshi_chat/utils/http/http_util.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -31,17 +29,17 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  Room room = Get.arguments;
-  var currentUser = Get.find<CurrentUserController>().current.value!;
-  var chatHubController = Get.find<ChatHubController>();
-  var usersController = Get.find<UsersController>();
-  var attachmentProvider = Get.find<AttachmentProvider>();
-  var chatProvider = Get.find<ChatProvider>();
-  var page = 1;
-  var hasMore = true;
-  List<Message> messages = [];
+  final Room _room = Get.arguments;
+  final ChatProvider _chatProvider = Get.find();
+  final _currentUser = Get.find<CurrentUserController>().current.value!;
+  final _chatHubController = Get.find<ChatHubController>();
+  final _usersController = Get.find<UsersController>();
+  final _attachmentProvider = Get.find<AttachmentProvider>();
   final _scrollController = ScrollController();
   final _messageInputController = TextEditingController();
+  var _page = 1;
+  var _hasMore = true;
+  List<Message> messages = [];
   bool _notSend = true;
   bool _audioInput = false;
   bool _displayEmoji = false;
@@ -63,7 +61,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    chatHubController.addPrivateChatListener(_privateChatListener);
+    _chatHubController.addPrivateChatListener(_privateChatListener);
     _getHistory().then((value) => {_jumpToBottom()});
   }
 
@@ -81,7 +79,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void dispose() {
-    chatHubController.removePrivateChatListener(_privateChatListener);
+    _chatHubController.removePrivateChatListener(_privateChatListener);
     _scrollController.dispose();
     super.dispose();
   }
@@ -90,18 +88,15 @@ class _ChatPageState extends State<ChatPage> {
     var content = _messageInputController.value.text;
     if (content.isEmpty) return;
     logger.i('send message $content');
-    var response = await HttpUtils.post('chat/text', data: {
-      'message': content,
-      'sendType': room.type.number,
-      'toId': room.toObject.id,
-    });
-    var result = GlobalResponse.fromMap(response.data);
-    if (!result.succeeded) {
-      throw Exception(jsonEncode(result.errors));
+    var response =
+        await _chatProvider.sendText(_room.toId, content, _room.type);
+
+    if (!response.body!.succeeded) {
+      throw Exception(jsonEncode(response.body!.errors));
     }
     _messageInputController.clear();
-    var message = Message.fromMap(result.data);
-    message.fromUser = currentUser;
+    var message = Message.fromMap(response.body!.data);
+    message.fromUser = _currentUser;
     logger.i('send message $message');
     setState(() {
       messages.add(message);
@@ -110,14 +105,13 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future _refresh() async {
-    if (!hasMore) return;
+    if (!_hasMore) return;
     _getHistory();
   }
 
   Future _getHistory() async {
-    var response =
-        await HttpUtils.get("chat/${room.id}/history?page=$page&size=15");
-    var result = GlobalResponse.fromMap(response.data);
+    var response = await _chatProvider.history(_room.id, _page, size: 15);
+    var result = response.body!;
     if (!result.succeeded) {
       throw Exception(jsonEncode(result.errors));
     }
@@ -127,24 +121,24 @@ class _ChatPageState extends State<ChatPage> {
         .map((e) => Message.fromMap(e))
         .toList();
     for (var element in data) {
-      var user = await usersController.getUserById(element.fromId);
+      var user = await _usersController.getUserById(element.fromId);
       element.fromUser = user;
     }
     setState(() {
       messages.insertAll(0, data);
-      hasMore = pagedList.hasNext;
-      page++;
+      _hasMore = pagedList.hasNext;
+      _page++;
     });
   }
 
-  Widget buildFutureBuilder() {
+  Widget _buildFutureBuilder() {
     return RefreshIndicator(
-        notificationPredicate: (notification) => hasMore,
+        notificationPredicate: (notification) => _hasMore,
         onRefresh: _refresh,
-        child: buildListView(context, messages));
+        child: _buildListView(context, messages));
   }
 
-  Widget buildListView(BuildContext context, List<Message> messages) {
+  Widget _buildListView(BuildContext context, List<Message> messages) {
     return ListView.separated(
         controller: _scrollController,
         separatorBuilder: (BuildContext context, int index) => const SizedBox(
@@ -154,17 +148,16 @@ class _ChatPageState extends State<ChatPage> {
         itemBuilder: (context, index) {
           return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: buildMessageView(context, messages[index]));
+              child: _buildMessageView(context, messages[index]));
         });
   }
 
-  Widget buildMessageView(BuildContext context, Message message) {
-    var isMe = currentUser.id == message.fromId;
-    var user = isMe ? currentUser : message.fromUser!;
-    if (message.messageType == MessageType.text) {
-      return TextMessage(isMe: isMe, user: user, message: message);
-    }
+  Widget _buildMessageView(BuildContext context, Message message) {
+    var isMe = _currentUser.id == message.fromId;
+    var user = isMe ? _currentUser : message.fromUser!;
     switch (message.messageType) {
+      case MessageType.text:
+        return TextMessage(isMe: isMe, user: user, message: message);
       case MessageType.image:
         return ImageMessage(isMe: isMe, user: user, message: message);
       case MessageType.audio:
@@ -182,13 +175,13 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(room.name ?? ""),
+          title: Text(_room.name ?? ""),
         ),
         body: Column(
           children: [
             Expanded(
               child: Container(
-                  color: Colors.blueGrey, child: buildFutureBuilder()),
+                  color: Colors.blueGrey, child: _buildFutureBuilder()),
             ),
             _buildMessageInputBuilder()
           ],
@@ -254,9 +247,31 @@ class _ChatPageState extends State<ChatPage> {
                         child: const Text("发送")),
               ],
             ),
+            _buildMoreActionView(),
             _buildEmojiView(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMoreActionView() {
+    if (!_displayMoreAction) {
+      return const SizedBox.shrink();
+    }
+    return Expanded(
+      child: GridView(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4, mainAxisSpacing: 8, crossAxisSpacing: 8),
+        children: [
+          IconButton(
+              onPressed: () {
+                _filePicker();
+              },
+              icon: const Icon(Icons.attach_file)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.video_call)),
+        ],
       ),
     );
   }
@@ -297,18 +312,20 @@ class _ChatPageState extends State<ChatPage> {
   Message _sendAttachmentMessage(Attachment attachment) {
     var message = Message(
         id: DateTime.now().millisecondsSinceEpoch,
-        roomId: room.id,
+        roomId: _room.id,
         createTime: DateTime.now().millisecondsSinceEpoch,
         attachments: [attachment],
         status: MessageStatus.sending,
         messageType: MessageType.otherFile,
         content: attachment.toMap(),
-        fromId: currentUser.id,
-        fromUser: currentUser,
-        toId: room.toId,
-        sendType: room.type);
+        fromId: _currentUser.id,
+        fromUser: _currentUser,
+        toId: _room.toId,
+        sendType: _room.type);
 
-    chatProvider.sendFile(room.toId, attachment.id, room.type).then((response) {
+    _chatProvider
+        .sendFile(_room.toId, attachment.id, _room.type)
+        .then((response) {
       if (response.hasError) {
         message.status = MessageStatus.failed;
         logger.e(response.statusText);
@@ -331,7 +348,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<Attachment?> _uploadAttachment(String filepath) async {
     var response =
-        await attachmentProvider.upload(filepath, (double progressValue) {});
+        await _attachmentProvider.upload(filepath, (double progressValue) {});
 
     if (response.hasError) {
       logger.e(response.statusText);

@@ -51,4 +51,12 @@ class Globalization {
   static const String errorAccountNoExistsOrIncorrectPassword =
       "errorAccountNoExistsOrIncorrectPassword";
   static const String errorUserNotExists = "errorUserNotExists";
+
+  static const String applyJoinGroupPageTitle = "applyJoinGroupPageTitle";
+  static const String applyFriendPageTitle = "applyFriendPageTitle";
+  static const String actionApply = "actionApply";
+  static const String remark = "remark";
+  static const String applySuccess = "applySuccess";  
+
+  static const String success = "success";
 }

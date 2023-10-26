@@ -44,6 +44,12 @@ class LocaleMessage extends Translations {
           Globalization.rejected: "Rejected",
           Globalization.ignored: "Ignored",
           Globalization.noNewInformationYet: "No new information yet",
+          Globalization.applyFriendPageTitle: "Apply Friend",
+          Globalization.actionApply: "Apply",
+          Globalization.applyJoinGroupPageTitle: "Apply Join Group",
+          Globalization.remark: "Remark",
+          Globalization.success: "Success",
+          Globalization.applySuccess: "Apply Success",
         },
         "zh_CN": {
           Globalization.language: "语言",
@@ -84,6 +90,12 @@ class LocaleMessage extends Translations {
           Globalization.rejected: "已拒绝",
           Globalization.ignored: "已忽略",
           Globalization.noNewInformationYet: "暂无新信息",
+          Globalization.applyFriendPageTitle: "申请好友",
+          Globalization.actionApply: "申请",
+          Globalization.applyJoinGroupPageTitle: "申请加入群聊",
+          Globalization.remark: "备注",
+          Globalization.success: "成功",
+          Globalization.applySuccess: "申请成功",
         },
       };
 }

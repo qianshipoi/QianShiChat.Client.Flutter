@@ -5,10 +5,9 @@ import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/enums/apply_status.dart';
 import 'package:qianshi_chat/models/enums/message_send_type.dart';
 import 'package:qianshi_chat/models/friend_apply.dart';
-import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
+import 'package:qianshi_chat/providers/user_provider.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
-import 'package:qianshi_chat/utils/http/http_util.dart';
 
 class NewFriendPage extends StatefulWidget {
   const NewFriendPage({super.key});
@@ -20,6 +19,7 @@ class NewFriendPage extends StatefulWidget {
 class _NewFriendPageState extends State<NewFriendPage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
+  final UserProvider _userProvider = Get.find();
   late Future<List<FriendApply>> _applyFuture;
   final roomsController = Get.find<RoomsController>();
   int beforeLastTime = 0;
@@ -35,9 +35,8 @@ class _NewFriendPageState extends State<NewFriendPage> {
   }
 
   Future<List<FriendApply>> _getApplyList() async {
-    var response = await HttpUtils.get('FriendApply/Pending',
-        params: {'size': 20, 'beforeLastTime': 0});
-    var result = GlobalResponse.fromMap(response.data);
+    var response = await _userProvider.friendApplyPending(20);
+    var result = response.body!;
     if (!result.succeeded) {
       throw Exception(result.errors);
     }

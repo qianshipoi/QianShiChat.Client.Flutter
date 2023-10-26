@@ -1,22 +1,19 @@
 import 'package:get/get.dart';
 import 'package:qianshi_chat/main.dart';
-import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/group.dart';
+import 'package:qianshi_chat/providers/group_provider.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
-import 'package:qianshi_chat/utils/http/http_util.dart';
-
-import 'current_user_controller.dart';
 
 class GroupsController extends GetxController {
-  final chatController = Get.find<ChatHubController>();
-  final currentUserController = Get.find<CurrentUserController>();
+  final _chatController = Get.find<ChatHubController>();
+  final GroupProvider _groupProvider = Get.find();
   final groups = <Group>[].obs;
-  var cacheGroups = <Group>[];
+  final cacheGroups = <Group>[];
   @override
   void onInit() {
     super.onInit();
     ever(
-        chatController.isConnection,
+        _chatController.isConnection,
         (callback) => {
               if (callback)
                 {
@@ -26,8 +23,8 @@ class GroupsController extends GetxController {
   }
 
   Future<void> _getGroups() async {
-    var response = await HttpUtils.get('group');
-    var result = GlobalResponse.fromMap(response.data);
+    var response = await _groupProvider.getAll();
+    var result = response.body!;
     if (!result.succeeded) {
       logger.e('获取群组失败');
       return;
@@ -47,8 +44,9 @@ class GroupsController extends GetxController {
     if (group != null) return group;
 
     // from server
-    var response = await HttpUtils.get('group/$id');
-    var result = GlobalResponse.fromMap(response.data);
+    var response = await _groupProvider.getGroup(id);
+
+    var result = response.body!;
     if (!result.succeeded) {
       logger.e('获取群组失败');
       return null;

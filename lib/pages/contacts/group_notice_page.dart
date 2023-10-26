@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/enums/apply_status.dart';
-import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/models/group_apply.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
-import 'package:qianshi_chat/utils/http/http_util.dart';
+import 'package:qianshi_chat/providers/group_provider.dart';
 
 class GroupNoticePage extends StatefulWidget {
   const GroupNoticePage({super.key});
@@ -17,6 +16,7 @@ class GroupNoticePage extends StatefulWidget {
 class _GroupNoticePageState extends State<GroupNoticePage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
+  final GroupProvider _groupProvider = Get.find();
   late Future<List<GroupApply>> _applyFuture;
   int beforeLastTime = 0;
   bool hasMore = true;
@@ -30,9 +30,8 @@ class _GroupNoticePageState extends State<GroupNoticePage> {
   }
 
   Future<List<GroupApply>> _getApplyList() async {
-    var response = await HttpUtils.get('group/apply/pending',
-        params: {'size': 20, 'beforeLastTime': 0});
-    var result = GlobalResponse.fromMap(response.data);
+    var response = await _groupProvider.pending(20, beforeLastTime: 0);
+    var result = response.body!;
     if (!result.succeeded) {
       throw Exception(result.errors);
     }
