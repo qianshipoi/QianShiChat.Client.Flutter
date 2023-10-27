@@ -31,7 +31,7 @@ class UserProvider extends ApiBaseProvider {
 
   Future<Response<GlobalResponse>> friendApply(int userId, String remark) {
     return post<GlobalResponse>('friendApply', {
-      'userId': userId,
+      'userId': userId.toString(),
       'remark': remark,
     });
   }
@@ -39,8 +39,8 @@ class UserProvider extends ApiBaseProvider {
   Future<Response<GlobalResponse>> friendApplyPending(int size,
       {int beforeLastTime = 0}) {
     return get<GlobalResponse>('friendApply/pending', query: {
-      'size': size,
-      'beforeLastTime': beforeLastTime,
+      'size': size.toString(),
+      'beforeLastTime': beforeLastTime.toString(),
     });
   }
 

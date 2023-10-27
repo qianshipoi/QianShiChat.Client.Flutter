@@ -20,6 +20,7 @@ class ApiBaseProvider extends GetConnect {
       if (response.statusCode == 401) {
         logout();
       }
+      logger.i(response.bodyString);
       return response;
     });
 

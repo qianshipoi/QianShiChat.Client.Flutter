@@ -10,8 +10,8 @@ class ChatProvider extends ApiBaseProvider {
     int size = 20,
   }) {
     return get<GlobalResponse>('chat/$roomId/history', query: {
-      'page': page,
-      'size': size,
+      'page': page.toString(),
+      'size': size.toString(),
     });
   }
 
@@ -21,18 +21,18 @@ class ChatProvider extends ApiBaseProvider {
     MessageSendType type,
   ) {
     return post<GlobalResponse>('chat/text', {
-      'toId': toId,
+      'toId': toId.toString(),
       'message': message,
-      'type': type.number,
+      'type': type.number.toString(),
     });
   }
 
   Future<Response<GlobalResponse>> sendFile(
       int toId, int attachmentId, MessageSendType type) {
     return post<GlobalResponse>('chat/file', {
-      'toId': toId,
-      'attachmentId': attachmentId,
-      'type': type.number,
+      'toId': toId.toString(),
+      'attachmentId': attachmentId.toString(),
+      'type': type.number.toString(),
     });
   }
 }

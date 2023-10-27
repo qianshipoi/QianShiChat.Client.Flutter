@@ -30,8 +30,8 @@ class GroupProvider extends ApiBaseProvider {
 
   Future<Response<GlobalResponse>> pending(int size, {int beforeLastTime = 0}) {
     return get<GlobalResponse>('group/apply/pending', query: {
-      'size': size,
-      'beforeLastTime': beforeLastTime,
+      'size': size.toString(),
+      'beforeLastTime': beforeLastTime.toString(),
     });
   }
 
@@ -44,8 +44,8 @@ class GroupProvider extends ApiBaseProvider {
   Future<Response<GlobalResponse>> getMembers(int groupId,
       {required int page, required int size}) {
     return get<GlobalResponse>('group/$groupId/members', query: {
-      'page': page,
-      'size': size,
+      'page': page.toString(),
+      'size': size.toString(),
     });
   }
 
