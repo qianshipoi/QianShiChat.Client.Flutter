@@ -1,3 +1,6 @@
+import 'package:get/get.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
+
 class CommonUtil {
   static String formatFileSize(int size) {
     if (size < 1024) {
@@ -32,11 +35,11 @@ class CommonUtil {
     if (diff.inDays > 0) {
       return '${date.month}-${date.day}';
     } else if (diff.inHours > 0) {
-      return '${diff.inHours} hours ago';
+      return '${diff.inHours} ${Globalization.hoursAgo.tr}';
     } else if (diff.inMinutes > 0) {
-      return '${diff.inMinutes} minutes ago';
+      return '${diff.inMinutes} ${Globalization.minutesAgo.tr}';
     } else {
-      return 'just now';
+      return Globalization.justNow.tr;
     }
   }
 }

@@ -21,18 +21,18 @@ class ChatProvider extends ApiBaseProvider {
     MessageSendType type,
   ) {
     return post<GlobalResponse>('chat/text', {
-      'toId': toId.toString(),
+      'toId': toId,
       'message': message,
-      'type': type.number.toString(),
+      'sendType': type.number,
     });
   }
 
   Future<Response<GlobalResponse>> sendFile(
       int toId, int attachmentId, MessageSendType type) {
     return post<GlobalResponse>('chat/file', {
-      'toId': toId.toString(),
-      'attachmentId': attachmentId.toString(),
-      'type': type.number.toString(),
+      'toId': toId,
+      'attachmentId': attachmentId,
+      'sendType': type.number,
     });
   }
 }

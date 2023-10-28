@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/enums/message_status.dart';
@@ -39,7 +40,7 @@ class _ChatPageState extends State<ChatPage> {
   final _messageInputController = TextEditingController();
   var _page = 1;
   var _hasMore = true;
-  List<Message> messages = [];
+  final List<Message> _messages = [];
   bool _notSend = true;
   bool _audioInput = false;
   bool _displayEmoji = false;
@@ -67,7 +68,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void _privateChatListener(Message message) {
     setState(() {
-      messages.add(message);
+      _messages.add(message);
     });
     _jumpToBottom();
   }
@@ -99,7 +100,7 @@ class _ChatPageState extends State<ChatPage> {
     message.fromUser = _currentUser;
     logger.i('send message $message');
     setState(() {
-      messages.add(message);
+      _messages.add(message);
       _jumpToBottom();
     });
   }
@@ -125,7 +126,7 @@ class _ChatPageState extends State<ChatPage> {
       element.fromUser = user;
     }
     setState(() {
-      messages.insertAll(0, data);
+      _messages.insertAll(0, data);
       _hasMore = pagedList.hasNext;
       _page++;
     });
@@ -135,7 +136,7 @@ class _ChatPageState extends State<ChatPage> {
     return RefreshIndicator(
         notificationPredicate: (notification) => _hasMore,
         onRefresh: _refresh,
-        child: _buildListView(context, messages));
+        child: _buildListView(context, _messages));
   }
 
   Widget _buildListView(BuildContext context, List<Message> messages) {
@@ -209,7 +210,8 @@ class _ChatPageState extends State<ChatPage> {
                 Expanded(
                   child: _audioInput
                       ? ElevatedButton(
-                          onPressed: () {}, child: const Text("按住说话"))
+                          onPressed: () {},
+                          child: Text(Globalization.holdToTalk.tr))
                       : TextField(
                           controller: _messageInputController,
                           onChanged: (value) {
@@ -244,7 +246,7 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {
                           _sendTextMessage();
                         },
-                        child: const Text("发送")),
+                        child: Text(Globalization.send.tr)),
               ],
             ),
             _buildMoreActionView(),
@@ -305,7 +307,7 @@ class _ChatPageState extends State<ChatPage> {
     if (attachment == null) return;
 
     setState(() {
-      messages.add(_sendAttachmentMessage(attachment));
+      _messages.add(_sendAttachmentMessage(attachment));
     });
   }
 

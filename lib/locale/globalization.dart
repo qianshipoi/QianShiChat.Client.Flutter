@@ -56,7 +56,13 @@ class Globalization {
   static const String applyFriendPageTitle = "applyFriendPageTitle";
   static const String actionApply = "actionApply";
   static const String remark = "remark";
-  static const String applySuccess = "applySuccess";  
+  static const String applySuccess = "applySuccess";
 
   static const String success = "success";
+  static const String send = "send";
+  static const String holdToTalk = "holdToTalk";
+
+  static const String hoursAgo = "hoursAgo";
+  static const String minutesAgo = "minutesAgo";
+  static const String justNow = "justNow";
 }

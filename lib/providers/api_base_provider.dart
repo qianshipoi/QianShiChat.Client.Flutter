@@ -7,13 +7,18 @@ import 'package:qianshi_chat/utils/global.dart';
 class ApiBaseProvider extends GetConnect {
   @override
   void onInit() {
-    httpClient.defaultDecoder = (map) => GlobalResponse.fromMap(map);
+    httpClient.defaultDecoder = (map) {
+      logger.i(map);
+      return GlobalResponse.fromMap(map);
+    };
     httpClient.baseUrl = ApiContants.apiBaseUrl;
     httpClient.addRequestModifier<Object?>((request) async {
       if (Global.accessToken != null) {
         request.headers['Authorization'] = 'Bearer ${Global.accessToken}';
       }
       request.headers['Client-Type'] = ApiContants.clientType;
+      logger.i('requestUrl: ${request.url}');
+      logger.i('requestHeaders: ${request.headers}');
       return request;
     });
     httpClient.addResponseModifier((request, response) {

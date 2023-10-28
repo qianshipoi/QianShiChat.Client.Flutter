@@ -31,7 +31,7 @@ class UserProvider extends ApiBaseProvider {
 
   Future<Response<GlobalResponse>> friendApply(int userId, String remark) {
     return post<GlobalResponse>('friendApply', {
-      'userId': userId.toString(),
+      'userId': userId,
       'remark': remark,
     });
   }

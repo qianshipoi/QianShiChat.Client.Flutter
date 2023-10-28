@@ -50,6 +50,11 @@ class LocaleMessage extends Translations {
           Globalization.remark: "Remark",
           Globalization.success: "Success",
           Globalization.applySuccess: "Apply Success",
+          Globalization.send: "Send",
+          Globalization.holdToTalk: "Hold to talk",
+          Globalization.hoursAgo: "hours ago",
+          Globalization.minutesAgo: "minutes ago",
+          Globalization.justNow: "just now",
         },
         "zh_CN": {
           Globalization.language: "语言",
@@ -96,6 +101,11 @@ class LocaleMessage extends Translations {
           Globalization.remark: "备注",
           Globalization.success: "成功",
           Globalization.applySuccess: "申请成功",
+          Globalization.send: "发送",
+          Globalization.holdToTalk: "按住说话",
+          Globalization.hoursAgo: "小时前",
+          Globalization.minutesAgo: "分钟前",
+          Globalization.justNow: "刚刚",
         },
       };
 }
