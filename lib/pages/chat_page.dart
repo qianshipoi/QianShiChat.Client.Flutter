@@ -312,13 +312,29 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Message _sendAttachmentMessage(Attachment attachment) {
+    var messageType = MessageType.otherFile;
+    switch (attachment.contentType) {
+      case "image/jpeg":
+      case "image/png":
+      case "image/gif":
+      case "image/wemb":
+        messageType = MessageType.image;
+        break;
+      case "video/mp4":
+        messageType = MessageType.video;
+        break;
+      case "audio/mpeg":
+        messageType = MessageType.audio;
+        break;
+    }
+
     var message = Message(
         id: DateTime.now().millisecondsSinceEpoch,
         roomId: _room.id,
         createTime: DateTime.now().millisecondsSinceEpoch,
         attachments: [attachment],
         status: MessageStatus.sending,
-        messageType: MessageType.otherFile,
+        messageType: messageType,
         content: attachment.toMap(),
         fromId: _currentUser.id,
         fromUser: _currentUser,
