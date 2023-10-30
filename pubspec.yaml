@@ -37,6 +37,9 @@ dependencies:
   permission_handler: ^11.0.1
   flutter_sound: ^9.2.13
   lottie: ^1.1.0
+  video_player: ^2.2.11
+  auto_orientation: ^2.2.1
+  brightness_volume: ^1.0.3
 
 dev_dependencies:
   flutter_test:
