@@ -10,7 +10,7 @@ class VideoPlayerGestures extends StatefulWidget {
   final List<Widget> children;
   final Function(bool) appearCallback;
   @override
-  _VideoPlayerGesturesState createState() => _VideoPlayerGesturesState();
+  State<VideoPlayerGestures> createState() => _VideoPlayerGesturesState();
 }
 
 class _VideoPlayerGesturesState extends State<VideoPlayerGestures> {
@@ -30,7 +30,6 @@ class _VideoPlayerGesturesState extends State<VideoPlayerGestures> {
   final List<Widget> _children = [];
   @override
   void initState() {
-    // TODO: implement initState
     _percentageWidget = PercentageWidget();
     _children.addAll(widget.children);
     _children.add(_percentageWidget);
@@ -226,7 +225,7 @@ class PercentageWidget extends StatefulWidget {
   late Function(String) percentageCallback; // 百分比
   late Function(bool) offstageCallback;
   @override
-  _PercentageWidgetState createState() => _PercentageWidgetState();
+  State<PercentageWidget> createState() => _PercentageWidgetState();
 }
 
 class _PercentageWidgetState extends State<PercentageWidget> {
@@ -234,7 +233,6 @@ class _PercentageWidgetState extends State<PercentageWidget> {
   bool _offstage = true;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     widget.percentageCallback = (percentage) {
       _percentage = percentage;

@@ -58,7 +58,7 @@ class VideoPlayerUtils {
       if (url.isEmpty) return;
       // 重置播放器
       _instance._resetController();
-      _instance._controller = VideoPlayerController.network(url);
+      _instance._controller = VideoPlayerController.networkUrl(Uri.parse(url));
       try {
         await _instance._controller!.initialize();
         _instance._isInitialized = true;
