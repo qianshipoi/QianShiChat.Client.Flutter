@@ -19,6 +19,8 @@ class Globalization {
   static const String firend = "firend";
   static const String grouping = "grouping";
   static const String group = "group";
+  static const String newGroup = "newGroup";
+  static const String selectFriends = "selectFriends";
 
   static const String online = "online";
   static const String offline = "offline";
@@ -65,4 +67,11 @@ class Globalization {
   static const String hoursAgo = "hoursAgo";
   static const String minutesAgo = "minutesAgo";
   static const String justNow = "justNow";
+
+  static const String groupName = "groupName";
+  static const String groupAvatar = "groupAvatar";
+  static const String groupMembers = "groupMembers";
+  static const String groupMembersCount = "groupMembersCount";
+  static const String createFailed = "createFailed";
+  static const String createSuccess = "createSuccess";
 }

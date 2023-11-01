@@ -18,10 +18,11 @@ class RouterContants {
   static const register = "/register";
   static const chat = "/chat";
   static const userProfile = "/user_profile";
-  static const newFriend = "/new_friend";
+  static const friendNotice = "/friend_notice";
   static const groupNotice = "/group_notice";
   static const applyFriend = "/apply_friend";
   static const applyGroup = "/apply_group";
+  static const newGroup = "/new_group";
 }
 
 class AssetsContants {

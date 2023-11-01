@@ -8,8 +8,9 @@ import 'package:qianshi_chat/pages/apply_friend_page.dart';
 import 'package:qianshi_chat/pages/apply_group_page.dart';
 import 'package:qianshi_chat/pages/chat_page.dart';
 import 'package:qianshi_chat/pages/contacts/group_notice_page.dart';
-import 'package:qianshi_chat/pages/contacts/new_friend_page.dart';
+import 'package:qianshi_chat/pages/contacts/friend_notice_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
+import 'package:qianshi_chat/pages/new_group_page.dart';
 import 'package:qianshi_chat/pages/settings_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
 import 'package:qianshi_chat/pages/user_profile_page.dart';
@@ -99,11 +100,12 @@ class MyApp extends StatelessWidget {
       routes: {
         RouterContants.chat: (context) => const ChatPage(),
         RouterContants.userProfile: (context) => const UserProfilePage(),
-        RouterContants.newFriend: (context) => const NewFriendPage(),
+        RouterContants.friendNotice: (context) => const FriendNoticePage(),
         RouterContants.groupNotice: (context) => const GroupNoticePage(),
         RouterContants.settings: (context) => const SettingsPage(),
         RouterContants.applyFriend: (context) => const ApplyFriendPage(),
         RouterContants.applyGroup: (context) => const ApplyGroupPage(),
+        RouterContants.newGroup: (context) => const NewGroupPage(),
       },
       translations: LocaleMessage(),
       locale: Get.find<IndexController>().currentLocale.value,

@@ -43,7 +43,7 @@ class _ContactsPageState extends State<ContactsPage>
                       title: Text(Globalization.newFriend.tr),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        Get.toNamed(RouterContants.newFriend);
+                        Get.toNamed(RouterContants.friendNotice);
                       },
                     ),
                     ListTile(

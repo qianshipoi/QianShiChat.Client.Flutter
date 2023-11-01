@@ -7,11 +7,10 @@ class GroupProvider extends ApiBaseProvider {
     return get<GlobalResponse>('group');
   }
 
-  Future<Response<GlobalResponse>> create(List<int> friendIds, {String? name}) {
-    return post<GlobalResponse>('group', {
-      'friendIds': friendIds,
-      'name': name,
-    });
+  Future<Response<GlobalResponse>> create(List<int> friendIds,
+      {String? name, int? avatarId}) {
+    return post<GlobalResponse>(
+        'group', {'friendIds': friendIds, 'name': name, 'avatarId': avatarId});
   }
 
   Future<Response<GlobalResponse>> join(int id, String remark) {

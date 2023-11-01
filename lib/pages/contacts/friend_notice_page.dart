@@ -9,14 +9,14 @@ import 'package:qianshi_chat/models/paged_list.dart';
 import 'package:qianshi_chat/providers/user_provider.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
 
-class NewFriendPage extends StatefulWidget {
-  const NewFriendPage({super.key});
+class FriendNoticePage extends StatefulWidget {
+  const FriendNoticePage({super.key});
 
   @override
-  State<NewFriendPage> createState() => _NewFriendPageState();
+  State<FriendNoticePage> createState() => _FriendNoticePageState();
 }
 
-class _NewFriendPageState extends State<NewFriendPage> {
+class _FriendNoticePageState extends State<FriendNoticePage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
   final UserProvider _userProvider = Get.find();
