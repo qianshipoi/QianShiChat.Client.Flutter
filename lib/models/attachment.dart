@@ -10,7 +10,7 @@ class Attachment {
   String hash;
   String contentType;
   int size;
-  int? progress;
+  double? progress;
   Attachment({
     required this.id,
     required this.name,
@@ -30,7 +30,7 @@ class Attachment {
     String? hash,
     String? contentType,
     int? size,
-    int? progress,
+    double? progress,
   }) {
     return Attachment(
       id: id ?? this.id,
@@ -66,7 +66,7 @@ class Attachment {
       hash: map['hash'] as String,
       contentType: map['contentType'] as String,
       size: map['size'] as int,
-      progress: map['progress'] != null ? map['progress'] as int : null,
+      progress: map['progress'] != null ? map['progress'] as double : null,
     );
   }
 

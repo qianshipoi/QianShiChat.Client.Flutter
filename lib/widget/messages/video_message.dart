@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/message.dart';
@@ -6,9 +8,9 @@ import 'package:video_player/video_player.dart';
 // ignore: must_be_immutable
 class VideoMessage extends StatefulWidget {
   final Message message;
-  late Attachment attachment;
-  VideoMessage({super.key, required this.message}) {
-    attachment = Attachment.fromMap(message.content);
+  late Attachment _attachment;
+  VideoMessage(this.message, {super.key}) {
+    _attachment = message.attachments[0];
   }
 
   @override
@@ -21,8 +23,10 @@ class VideoMessageState extends State<VideoMessage> {
   @override
   void initState() {
     super.initState();
-    _videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(widget.attachment.rawPath));
+    _videoPlayerController = widget._attachment.rawPath.startsWith('http')
+        ? VideoPlayerController.networkUrl(
+            Uri.parse(widget._attachment.rawPath))
+        : VideoPlayerController.file(File(widget._attachment.rawPath));
   }
 
   @override

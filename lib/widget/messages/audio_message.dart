@@ -4,9 +4,9 @@ import 'package:qianshi_chat/models/message.dart';
 class AudioMessage extends StatefulWidget {
   final Message message;
 
-  const AudioMessage({
+  const AudioMessage(
+    this.message, {
     super.key,
-    required this.message,
   });
 
   @override

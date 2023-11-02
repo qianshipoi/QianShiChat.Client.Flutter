@@ -42,4 +42,33 @@ class CommonUtil {
       return Globalization.justNow.tr;
     }
   }
+
+  static String getFileName(String path) {
+    var index = path.lastIndexOf('/');
+    if (index == -1) return path;
+    return path.substring(index + 1);
+  }
+
+  static String getContentType(String path) {
+    var index = path.lastIndexOf('.');
+    if (index == -1) return path;
+    var ext = path.substring(index + 1);
+    switch (ext) {
+      case "jpg":
+      case "jpeg":
+        return "image/jpeg";
+      case "png":
+        return "image/png";
+      case "gif":
+        return "image/gif";
+      case "webp":
+        return "image/webp";
+      case "mp4":
+        return "video/mp4";
+      case "mp3":
+        return "audio/mpeg";
+      default:
+        return "application/octet-stream";
+    }
+  }
 }

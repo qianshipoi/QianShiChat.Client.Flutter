@@ -63,6 +63,9 @@ class LocaleMessage extends Translations {
           Globalization.groupMembersCount: "Group Members Count:",
           Globalization.createFailed: "Create Failed",
           Globalization.createSuccess: "Create Success",
+          Globalization.attachFile: "Attach File",
+          Globalization.takePhoto: "Take Photo",
+          Globalization.takeVideo: "Take Video",
         },
         "zh_CN": {
           Globalization.language: "语言",
@@ -122,6 +125,9 @@ class LocaleMessage extends Translations {
           Globalization.groupMembersCount: "群聊成员数量：",
           Globalization.createFailed: "创建失败",
           Globalization.createSuccess: "创建成功",
+          Globalization.attachFile: "附件",
+          Globalization.takePhoto: "拍照",
+          Globalization.takeVideo: "拍视频",
         },
       };
 }

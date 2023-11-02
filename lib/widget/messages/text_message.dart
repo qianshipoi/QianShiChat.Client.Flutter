@@ -3,7 +3,7 @@ import 'package:qianshi_chat/models/message.dart';
 
 class TextMessage extends StatelessWidget {
   final Message message;
-  const TextMessage({super.key, required this.message});
+  const TextMessage(this.message, {super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -11,16 +11,18 @@ import 'package:qianshi_chat/models/enums/message_type.dart';
 import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
 import 'package:qianshi_chat/models/room.dart';
-import 'package:qianshi_chat/pages/chat/audio_message.dart';
-import 'package:qianshi_chat/pages/chat/image_message.dart';
-import 'package:qianshi_chat/pages/chat/other_file_message.dart';
-import 'package:qianshi_chat/pages/chat/text_message.dart';
-import 'package:qianshi_chat/pages/chat/video_message.dart';
+import 'package:qianshi_chat/widget/messages/audio_message.dart';
+import 'package:qianshi_chat/widget/messages/image_message.dart';
+import 'package:qianshi_chat/widget/messages/other_file_message.dart';
+import 'package:qianshi_chat/widget/messages/text_message.dart';
+import 'package:qianshi_chat/widget/messages/video_message.dart';
 import 'package:qianshi_chat/providers/attachment_provider.dart';
 import 'package:qianshi_chat/providers/chat_provider.dart';
 import 'package:qianshi_chat/stores/chat_hub_controller.dart';
 import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/users_controller.dart';
+import 'package:qianshi_chat/utils/common_util.dart';
+import 'package:qianshi_chat/widget/messages/base_message.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -44,7 +46,6 @@ class _ChatPageState extends State<ChatPage> {
   bool _notSend = true;
   bool _audioInput = false;
   bool _displayEmoji = false;
-  bool _displayMoreAction = false;
   final _focusNode = FocusNode();
   final _emojiList = [
     '😀',
@@ -105,6 +106,41 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  Future<void> _showMoreActionBottomSheet() async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return SizedBox(
+            height: 200,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.attach_file),
+                  title: Text(Globalization.attachFile.tr),
+                  onTap: () {
+                    _filePicker();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: Text(Globalization.takePhoto.tr),
+                  onTap: () {
+                    _filePicker();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.video_call),
+                  title: Text(Globalization.takeVideo.tr),
+                  onTap: () {
+                    _filePicker();
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   Future _refresh() async {
     if (!_hasMore) return;
     _getHistory();
@@ -158,15 +194,35 @@ class _ChatPageState extends State<ChatPage> {
     var user = isMe ? _currentUser : message.fromUser!;
     switch (message.messageType) {
       case MessageType.text:
-        return TextMessage(isMe: isMe, user: user, message: message);
+        return BaseMessage(
+            isMe: isMe,
+            user: user,
+            message: message,
+            child: TextMessage(message));
       case MessageType.image:
-        return ImageMessage(isMe: isMe, user: user, message: message);
+        return BaseMessage(
+            isMe: isMe,
+            user: user,
+            message: message,
+            child: ImageMessage(message));
       case MessageType.audio:
-        return AudioMessage(isMe: isMe, user: user, message: message);
+        return BaseMessage(
+            isMe: isMe,
+            user: user,
+            message: message,
+            child: AudioMessage(message));
       case MessageType.video:
-        return VideoMessage(isMe: isMe, user: user, message: message);
+        return BaseMessage(
+            isMe: isMe,
+            user: user,
+            message: message,
+            child: VideoMessage(message));
       case MessageType.otherFile:
-        return OtherFileMessage(isMe: isMe, user: user, message: message);
+        return BaseMessage(
+            isMe: isMe,
+            user: user,
+            message: message,
+            child: OtherFileMessage(message));
       default:
         return const Text('not support message type');
     }
@@ -234,12 +290,7 @@ class _ChatPageState extends State<ChatPage> {
                 _notSend
                     ? IconButton(
                         onPressed: () {
-                          setState(() {
-                            _displayMoreAction = !_displayMoreAction;
-                            if (_displayMoreAction) {
-                              FocusScope.of(context).requestFocus(_focusNode);
-                            }
-                          });
+                          _showMoreActionBottomSheet();
                         },
                         icon: const Icon(Icons.add))
                     : ElevatedButton(
@@ -249,31 +300,9 @@ class _ChatPageState extends State<ChatPage> {
                         child: Text(Globalization.send.tr)),
               ],
             ),
-            _buildMoreActionView(),
             _buildEmojiView(),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildMoreActionView() {
-    if (!_displayMoreAction) {
-      return const SizedBox.shrink();
-    }
-    return Expanded(
-      child: GridView(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4, mainAxisSpacing: 8, crossAxisSpacing: 8),
-        children: [
-          IconButton(
-              onPressed: () {
-                _filePicker();
-              },
-              icon: const Icon(Icons.attach_file)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.video_call)),
-        ],
       ),
     );
   }
@@ -301,17 +330,17 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _filePicker() async {
     var result = await FilePicker.platform.pickFiles();
     if (result == null) return;
-    var file = result.files.first;
 
-    var attachment = await _uploadAttachment(file.path!);
-    if (attachment == null) return;
+    var message = _uploadAttachment(result.files.first, (message) {
+      _sendAttachmentMessage(message);
+    });
 
     setState(() {
-      _messages.add(_sendAttachmentMessage(attachment));
+      _messages.add(message);
     });
   }
 
-  Message _sendAttachmentMessage(Attachment attachment) {
+  Message _buildAttachmentMessage(Attachment attachment) {
     var messageType = MessageType.otherFile;
     switch (attachment.contentType) {
       case "image/jpeg":
@@ -327,8 +356,7 @@ class _ChatPageState extends State<ChatPage> {
         messageType = MessageType.audio;
         break;
     }
-
-    var message = Message(
+    return Message(
         id: DateTime.now().millisecondsSinceEpoch,
         roomId: _room.id,
         createTime: DateTime.now().millisecondsSinceEpoch,
@@ -340,9 +368,11 @@ class _ChatPageState extends State<ChatPage> {
         fromUser: _currentUser,
         toId: _room.toId,
         sendType: _room.type);
+  }
 
+  void _sendAttachmentMessage(Message message) {
     _chatProvider
-        .sendFile(_room.toId, attachment.id, _room.type)
+        .sendFile(_room.toId, message.attachments[0].id, _room.type)
         .then((response) {
       if (response.hasError) {
         message.status = MessageStatus.failed;
@@ -360,18 +390,43 @@ class _ChatPageState extends State<ChatPage> {
       message.createTime = returnMessage.createTime;
       message.messageType = returnMessage.messageType;
     });
-
-    return message;
   }
 
-  Future<Attachment?> _uploadAttachment(String filepath) async {
-    var response =
-        await _attachmentProvider.upload(filepath, (double progressValue) {});
+  Message _uploadAttachment(
+      PlatformFile file, Function(Message) uploadComplete) {
+    var filepath = file.path!;
+    var attachment = Attachment(
+        id: DateTime.timestamp().microsecond,
+        name: CommonUtil.getFileName(filepath),
+        rawPath: filepath,
+        previewPath: filepath,
+        hash: "",
+        contentType: CommonUtil.getContentType(filepath),
+        size: file.size);
 
-    if (response.hasError) {
-      logger.e(response.statusText);
-      return null;
-    }
-    return Attachment.fromMap(response.body!.data);
+    var message = _buildAttachmentMessage(attachment);
+
+    _attachmentProvider
+        .upload(filepath, (progress) => attachment.progress = progress)
+        .then((response) {
+      if (response.hasError) {
+        logger.e(response.statusText);
+        return null;
+      }
+      var newAttachment = Attachment.fromMap(response.body!.data);
+      attachment.copyWith(
+        id: newAttachment.id,
+        name: newAttachment.name,
+        rawPath: newAttachment.rawPath,
+        previewPath: newAttachment.previewPath,
+        hash: newAttachment.hash,
+        contentType: newAttachment.contentType,
+        size: newAttachment.size,
+      );
+      message.content = attachment.toMap();
+      uploadComplete(message);
+    });
+
+    return message;
   }
 }

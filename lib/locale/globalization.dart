@@ -74,4 +74,8 @@ class Globalization {
   static const String groupMembersCount = "groupMembersCount";
   static const String createFailed = "createFailed";
   static const String createSuccess = "createSuccess";
+
+  static const String attachFile = "attachFile";
+  static const String takePhoto = "takePhoto";
+  static const String takeVideo = "takeVideo";
 }
