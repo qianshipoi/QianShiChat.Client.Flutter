@@ -14,7 +14,7 @@ class VideoMessage extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => VideoMessageState();
+  State<VideoMessage> createState() => VideoMessageState();
 }
 
 class VideoMessageState extends State<VideoMessage> {

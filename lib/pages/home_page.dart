@@ -112,6 +112,11 @@ class _HomePageState extends State<HomePage>
             appBar: AppBar(
               title: Text(bottomItems[_currentPage].label!),
               centerTitle: true,
+              actions: [
+                IconButton(
+                    onPressed: () => Get.toNamed(RouterContants.newGroup),
+                    icon: const Icon(Icons.create))
+              ],
             ),
             drawer: Drawer(
               child: ListView(

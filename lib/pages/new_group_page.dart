@@ -61,12 +61,13 @@ class _NewGroupPageState extends State<NewGroupPage> {
                 ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
+      body: Form(
+          key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Expanded(
             child: ListView(
+              padding: const EdgeInsets.all(8.0),
+              shrinkWrap: true,
               children: [
                 Text(Globalization.groupName.tr),
                 _buildGroupNameTextField(),
@@ -77,12 +78,12 @@ class _NewGroupPageState extends State<NewGroupPage> {
                     "${Globalization.groupMembers.tr}(${_groupMembers.length})"),
                 _buildGroupMemberList(),
               ],
-            )),
-      ),
+            ),
+          )),
     );
   }
 
-  _buildGroupNameTextField() {
+  Widget _buildGroupNameTextField() {
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "群聊名称",
@@ -95,14 +96,14 @@ class _NewGroupPageState extends State<NewGroupPage> {
     );
   }
 
-  _buildGroupAvatarUpload() {
+  Widget _buildGroupAvatarUpload() {
     return Container(
       height: 200,
       color: Colors.grey,
     );
   }
 
-  _buildGroupMemberList() {
+  Widget _buildGroupMemberList() {
     return GridView.builder(
       itemCount: _groupMembers.length + 1,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

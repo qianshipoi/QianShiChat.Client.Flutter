@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/main.dart';
@@ -9,7 +11,18 @@ class ApiBaseProvider extends GetConnect {
   void onInit() {
     httpClient.defaultDecoder = (map) {
       logger.i(map);
-      return GlobalResponse.fromMap(map);
+      Map<String, dynamic> map1 =
+          map.runtimeType == "".runtimeType ? jsonDecode(map) : map;
+      if (map1.containsKey("succeeded")) {
+        return GlobalResponse.fromMap(map1);
+      } else {
+        return GlobalResponse(
+            statusCode: map1['status'],
+            data: map,
+            succeeded: false,
+            errors: map,
+            timestamp: DateTime.now().millisecond);
+      }
     };
     httpClient.baseUrl = ApiContants.apiBaseUrl;
     httpClient.addRequestModifier<Object?>((request) async {
@@ -22,10 +35,11 @@ class ApiBaseProvider extends GetConnect {
       return request;
     });
     httpClient.addResponseModifier((request, response) {
+      logger.i(response.bodyString);
       if (response.statusCode == 401) {
         logout();
       }
-      logger.i(response.bodyString);
+
       return response;
     });
 
