@@ -66,6 +66,8 @@ class LocaleMessage extends Translations {
           Globalization.attachFile: "Attach File",
           Globalization.takePhoto: "Take Photo",
           Globalization.takeVideo: "Take Video",
+          Globalization.pleaseEnterGroupName: "Please enter group name",
+          Globalization.groupNameCanNotBeEmpty: "Group name can not be empty",
         },
         "zh_CN": {
           Globalization.language: "语言",
@@ -128,6 +130,8 @@ class LocaleMessage extends Translations {
           Globalization.attachFile: "附件",
           Globalization.takePhoto: "拍照",
           Globalization.takeVideo: "拍视频",
+          Globalization.pleaseEnterGroupName: "请输入群聊名称",
+          Globalization.groupNameCanNotBeEmpty: "群聊名称不能为空",
         },
       };
 }

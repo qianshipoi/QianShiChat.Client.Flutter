@@ -64,16 +64,20 @@ class _NewGroupPageState extends State<NewGroupPage> {
       body: Form(
           key: _formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Expanded(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints.expand(),
             child: ListView(
-              padding: const EdgeInsets.all(8.0),
-              shrinkWrap: true,
+              padding: const EdgeInsets.all(16),
               children: [
-                Text(Globalization.groupName.tr),
+                const SizedBox(height: 8),
                 _buildGroupNameTextField(),
+                const SizedBox(height: 8),
                 Text(Globalization.groupAvatar.tr),
+                const SizedBox(height: 8),
                 _buildGroupAvatarUpload(),
+                const SizedBox(height: 8),
                 const Divider(),
+                const SizedBox(height: 8),
                 Text(
                     "${Globalization.groupMembers.tr}(${_groupMembers.length})"),
                 _buildGroupMemberList(),
@@ -85,29 +89,42 @@ class _NewGroupPageState extends State<NewGroupPage> {
 
   Widget _buildGroupNameTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "群聊名称",
-        hintText: "请输入群聊名称",
+      decoration: InputDecoration(
+        isCollapsed: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        label: Text(Globalization.groupName.tr),
+        prefixIcon: const Icon(Icons.group),
+        border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+            borderSide: BorderSide(width: 2)),
       ),
       validator: (v) {
-        return v!.trim().isNotEmpty ? null : "群聊名称不能为空";
+        return v!.trim().isNotEmpty
+            ? null
+            : Globalization.groupNameCanNotBeEmpty.tr;
       },
       onSaved: (newValue) => _groupName = newValue!,
     );
   }
 
   Widget _buildGroupAvatarUpload() {
-    return Container(
-      height: 200,
-      color: Colors.grey,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
+      child: Container(
+        height: 200,
+        width: 200,
+        color: Colors.grey,
+      ),
     );
   }
 
   Widget _buildGroupMemberList() {
     return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: _groupMembers.length + 1,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 64),
+          maxCrossAxisExtent: 64, childAspectRatio: 0.78),
       itemBuilder: (context, index) {
         if (index == 0) {
           return IconButton(
@@ -117,6 +134,8 @@ class _NewGroupPageState extends State<NewGroupPage> {
                     selectedFriends: _groupMembers,
                   ));
               if (selectFriends != null) {
+                _groupMembers.clear();
+
                 setState(() {
                   _groupMembers.addAll(selectFriends);
                 });
@@ -126,23 +145,30 @@ class _NewGroupPageState extends State<NewGroupPage> {
           );
         }
         index = index - 1;
-        return Stack(children: [
+        return Stack(fit: StackFit.expand, children: [
           Column(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  _groupMembers[index].avatar,
-                  fit: BoxFit.cover,
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.network(
+                    _groupMembers[index].avatar,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Text(_groupMembers[index].alias ?? _groupMembers[index].nickName),
             ],
           ),
           Positioned(
+            top: 0,
             right: 0,
+            width: 20,
+            height: 20,
             child: IconButton(
-              icon: const Icon(Icons.close),
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.delete),
               onPressed: () {
                 setState(() {
                   _groupMembers.removeAt(index);

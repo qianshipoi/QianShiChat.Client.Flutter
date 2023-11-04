@@ -78,4 +78,7 @@ class Globalization {
   static const String attachFile = "attachFile";
   static const String takePhoto = "takePhoto";
   static const String takeVideo = "takeVideo";
+
+  static const String pleaseEnterGroupName = "pleaseEnterGroupName";
+  static const String groupNameCanNotBeEmpty = "groupNameCanNotBeEmpty";
 }
