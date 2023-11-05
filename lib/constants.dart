@@ -23,6 +23,7 @@ class RouterContants {
   static const applyFriend = "/apply_friend";
   static const applyGroup = "/apply_group";
   static const newGroup = "/new_group";
+  static const search = "/search";
 }
 
 class AssetsContants {

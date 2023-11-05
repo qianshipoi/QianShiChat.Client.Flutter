@@ -113,9 +113,33 @@ class _HomePageState extends State<HomePage>
               title: Text(bottomItems[_currentPage].label!),
               centerTitle: true,
               actions: [
-                IconButton(
-                    onPressed: () => Get.toNamed(RouterContants.newGroup),
-                    icon: const Icon(Icons.create))
+                PopupMenuButton(itemBuilder: (context) {
+                  return [
+                    PopupMenuItem<int>(
+                      value: 0,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.search),
+                          Text(Globalization.search.tr),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<int>(
+                        value: 1,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.add_box_outlined),
+                            Text(Globalization.newGroup.tr)
+                          ],
+                        )),
+                  ];
+                }, onSelected: (value) {
+                  if (value == 0) {
+                    Get.toNamed(RouterContants.search);
+                  } else if (value == 1) {
+                    Get.toNamed(RouterContants.newGroup);
+                  }
+                }),
               ],
             ),
             drawer: Drawer(
@@ -131,7 +155,7 @@ class _HomePageState extends State<HomePage>
                     trailing: const Icon(Icons.keyboard_arrow_right),
                   ),
                   ListTile(
-                    title: Text(Globalization.login.tr),
+                    title: Text(Globalization.logout.tr),
                     onTap: logout,
                   )
                 ],

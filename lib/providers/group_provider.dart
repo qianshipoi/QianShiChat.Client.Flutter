@@ -34,9 +34,12 @@ class GroupProvider extends ApiBaseProvider {
     });
   }
 
-  Future<Response<GlobalResponse>> search(String searchText) {
+  Future<Response<GlobalResponse>> search(String searchText,
+      {required int page, int size = 10}) {
     return get<GlobalResponse>('group/search', query: {
       'search': searchText,
+      'page': page.toString(),
+      'size': size.toString(),
     });
   }
 

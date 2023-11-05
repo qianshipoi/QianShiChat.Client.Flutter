@@ -81,4 +81,6 @@ class Globalization {
 
   static const String pleaseEnterGroupName = "pleaseEnterGroupName";
   static const String groupNameCanNotBeEmpty = "groupNameCanNotBeEmpty";
+
+  static const String search = "search";
 }

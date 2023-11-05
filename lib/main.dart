@@ -11,6 +11,7 @@ import 'package:qianshi_chat/pages/contacts/group_notice_page.dart';
 import 'package:qianshi_chat/pages/contacts/friend_notice_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/pages/new_group_page.dart';
+import 'package:qianshi_chat/pages/search_page.dart';
 import 'package:qianshi_chat/pages/settings_page.dart';
 import 'package:qianshi_chat/pages/splash_screen_page.dart';
 import 'package:qianshi_chat/pages/user_profile_page.dart';
@@ -106,6 +107,7 @@ class MyApp extends StatelessWidget {
         RouterContants.applyFriend: (context) => const ApplyFriendPage(),
         RouterContants.applyGroup: (context) => const ApplyGroupPage(),
         RouterContants.newGroup: (context) => const NewGroupPage(),
+        RouterContants.search: (context) => const SearchPage(),
       },
       translations: LocaleMessage(),
       locale: Get.find<IndexController>().currentLocale.value,
