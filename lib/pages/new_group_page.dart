@@ -1,7 +1,11 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:qianshi_chat/locale/globalization.dart';
+import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
+import 'package:qianshi_chat/providers/attachment_provider.dart';
 import 'package:qianshi_chat/providers/group_provider.dart';
 import 'package:qianshi_chat/widget/select_friends.dart';
 
@@ -14,11 +18,14 @@ class NewGroupPage extends StatefulWidget {
 
 class _NewGroupPageState extends State<NewGroupPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
+  final AttachmentProvider _attachmentProvider = Get.find();
   late String _groupName;
-  late int _groupAvatarId;
+  Attachment? _groupAvatar;
   final List<UserInfo> _groupMembers = [];
   final GroupProvider _groupProvider = Get.find<GroupProvider>();
   bool _isSaving = false;
+  bool _uploading = false;
+  double _uploadProgress = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +39,7 @@ class _NewGroupPageState extends State<NewGroupPage> {
                   icon: const Icon(Icons.save),
                   onPressed: () async {
                     var form = _formKey.currentState as FormState;
-                    if (!form.validate()) return;
+                    if (!form.validate() || _groupAvatar == null) return;
                     setState(() {
                       _isSaving = true;
                     });
@@ -40,7 +47,7 @@ class _NewGroupPageState extends State<NewGroupPage> {
                       var response = await _groupProvider.create(
                           _groupMembers.map((e) => e.id).toList(),
                           name: _groupName,
-                          avatarId: _groupAvatarId);
+                          avatarId: _groupAvatar!.id);
                       var body = response.body!;
                       if (!body.succeeded) {
                         Get.snackbar(
@@ -108,14 +115,77 @@ class _NewGroupPageState extends State<NewGroupPage> {
   }
 
   Widget _buildGroupAvatarUpload() {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
-      child: Container(
-        height: 200,
-        width: 200,
-        color: Colors.grey,
-      ),
+    return Stack(
+      children: [
+        Container(
+          height: 200,
+          width: 200,
+          color: const Color.fromARGB(255, 206, 204, 204),
+          child: _uploading
+              ? LinearProgressIndicator(
+                  value: _uploadProgress,
+                )
+              : IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: _groupAvatar == null
+                      ? const Icon(Icons.add_a_photo)
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: Image.network(
+                            _groupAvatar!.rawPath,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                  onPressed: () async {
+                    var fileResult = await FilePicker.platform
+                        .pickFiles(type: FileType.image, allowMultiple: false);
+                    if (fileResult == null || fileResult.count == 0) return;
+                    var croppedPath =
+                        await _cropImage(fileResult.files.first.path!);
+                    setState(() {
+                      _uploading = true;
+                    });
+                    try {
+                      var response = await _attachmentProvider.upload(
+                        croppedPath,
+                        uploadProgress: (p0) {
+                          setState(() {
+                            _uploadProgress = p0;
+                          });
+                        },
+                      );
+                      if (response.isOk && response.body!.succeeded) {
+                        setState(() {
+                          _groupAvatar =
+                              Attachment.fromMap(response.body!.data!);
+                        });
+                      }
+                    } catch (e) {
+                      Get.snackbar(Globalization.errorNetwork.tr, e.toString());
+                    } finally {
+                      setState(() {
+                        _uploading = false;
+                      });
+                    }
+                  },
+                ),
+        ),
+      ],
     );
+  }
+
+  Future<String> _cropImage(String imagePath) async {
+    var croppedFile = await ImageCropper.platform.cropImage(
+      sourcePath: imagePath,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ],
+    );
+    return croppedFile == null ? imagePath : croppedFile.path;
   }
 
   Widget _buildGroupMemberList() {

@@ -40,6 +40,7 @@ dependencies:
   video_player: ^2.2.11
   auto_orientation: ^2.2.1
   brightness_volume: ^1.0.3
+  image_cropper: 4.0.1
 
 dev_dependencies:
   flutter_test:

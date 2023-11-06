@@ -63,8 +63,14 @@ class _SearchPageState extends State<SearchPage> {
             controller: _searchController,
             onSubmitted: (value) => _search(),
             decoration: InputDecoration(
-              hintText: Globalization.search.tr,
+              isCollapsed: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              label: Text(Globalization.search.tr),
               prefixIcon: const Icon(Icons.search),
+              border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  borderSide: BorderSide(width: 2)),
             ),
           ),
           ListView.builder(

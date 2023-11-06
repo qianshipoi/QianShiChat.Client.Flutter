@@ -8,8 +8,8 @@ import 'package:qianshi_chat/models/global_response.dart';
 import 'package:qianshi_chat/providers/api_base_provider.dart';
 
 class AttachmentProvider extends ApiBaseProvider {
-  Future<Response<GlobalResponse>> upload(
-      String filePath, dynamic Function(double)? uploadProgress) async {
+  Future<Response<GlobalResponse>> upload(String filePath,
+      {dynamic Function(double)? uploadProgress}) async {
     final file = File(filePath);
     final fileName = file.path.split('/').last;
     final mimeType = lookupMimeType(file.path) ?? "application/octet-stream";

@@ -407,7 +407,10 @@ class _ChatPageState extends State<ChatPage> {
     var message = _buildAttachmentMessage(attachment);
 
     _attachmentProvider
-        .upload(filepath, (progress) => attachment.progress = progress)
+        .upload(filepath,
+            uploadProgress: (progress) => setState(() {
+                  attachment.progress = progress;
+                }))
         .then((response) {
       if (response.hasError) {
         logger.e(response.statusText);
