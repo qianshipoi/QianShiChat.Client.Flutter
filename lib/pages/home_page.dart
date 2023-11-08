@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_chat/constants.dart';
@@ -27,13 +28,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final pages = [const MessagePage(), const ContactsPage(), const MyPage()];
-  List<BottomNavigationBarItem> bottomItems = [
-    BottomNavigationBarItem(
-        icon: const Icon(Icons.message), label: Globalization.message.tr),
-    BottomNavigationBarItem(
-        icon: const Icon(Icons.people), label: Globalization.contacts.tr),
-    BottomNavigationBarItem(
-        icon: const Icon(Icons.person), label: Globalization.my.tr),
+  // final List<BottomNavigationBarItem> bottomItems = [
+  //   BottomNavigationBarItem(
+  //       icon: const Icon(Icons.message), label: Globalization.message.tr),
+  //   BottomNavigationBarItem(
+  //       icon: const Icon(Icons.people), label: Globalization.contacts.tr),
+  //   BottomNavigationBarItem(
+  //       icon: const Icon(Icons.person), label: Globalization.my.tr),
+  // ];
+  final List<Widget> bottomItems = [
+    const Icon(Icons.message, size: 30),
+    const Icon(Icons.people, size: 30),
+    const Icon(Icons.person, size: 30),
+  ];
+  final List<Text> bottomLabels = [
+    Text(Globalization.message.tr),
+    Text(Globalization.contacts.tr),
+    Text(Globalization.my.tr)
   ];
   int _currentPage = 0;
   final _boundaryKey = GlobalKey();
@@ -110,7 +121,7 @@ class _HomePageState extends State<HomePage>
         children: [
           Scaffold(
             appBar: AppBar(
-              title: Text(bottomItems[_currentPage].label!),
+              title: bottomLabels[_currentPage],
               centerTitle: true,
               actions: [
                 PopupMenuButton(itemBuilder: (context) {
@@ -161,9 +172,19 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
-            bottomNavigationBar: BottomNavigationBar(
-                items: bottomItems,
-                currentIndex: _currentPage,
+            bottomNavigationBar: CurvedNavigationBar(
+                items: [
+                  Icon(Icons.message,
+                      size: 24, color: Theme.of(context).colorScheme.onPrimary),
+                  Icon(Icons.people,
+                      size: 24, color: Theme.of(context).colorScheme.onPrimary),
+                  Icon(Icons.person,
+                      size: 24, color: Theme.of(context).colorScheme.onPrimary),
+                ],
+                index: _currentPage,
+                backgroundColor: Colors.transparent,
+                color: Theme.of(context).colorScheme.primary,
+                height: 60,
                 onTap: (index) {
                   setState(() {
                     _currentPage = index;

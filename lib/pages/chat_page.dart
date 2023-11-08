@@ -11,6 +11,7 @@ import 'package:qianshi_chat/models/enums/message_type.dart';
 import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/models/paged_list.dart';
 import 'package:qianshi_chat/models/room.dart';
+import 'package:qianshi_chat/widget/file_upoad/message_attachment_upload_panel.dart';
 import 'package:qianshi_chat/widget/messages/audio_message.dart';
 import 'package:qianshi_chat/widget/messages/image_message.dart';
 import 'package:qianshi_chat/widget/messages/other_file_message.dart';
@@ -178,9 +179,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildListView(BuildContext context, List<Message> messages) {
     return ListView.separated(
         controller: _scrollController,
-        separatorBuilder: (BuildContext context, int index) => const SizedBox(
-              height: 12,
-            ),
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemCount: messages.length,
         itemBuilder: (context, index) {
           return Padding(
@@ -237,8 +236,29 @@ class _ChatPageState extends State<ChatPage> {
         body: Column(
           children: [
             Expanded(
-              child: Container(
-                  color: Colors.blueGrey, child: _buildFutureBuilder()),
+              child: Stack(
+                children: [
+                  Container(
+                      color: Colors.blueGrey, child: _buildFutureBuilder()),
+                  Positioned(
+                    bottom: 8.0,
+                    left: 8.0,
+                    right: 8.0,
+                    child: MessageAttachmentUploadPanel(attachments: [
+                      MessageAttachment(
+                          name: "test",
+                          path: "test",
+                          size: "100",
+                          progress: 0.5),
+                      MessageAttachment(
+                          name: "test2",
+                          path: "test2",
+                          size: "100",
+                          progress: 0.1)
+                    ]),
+                  )
+                ],
+              ),
             ),
             _buildMessageInputBuilder()
           ],

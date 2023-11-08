@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qianshi_chat/utils/video_player_utils.dart';
-import 'package:qianshi_chat/widget/video_player_slider.dart';
+import 'package:qianshi_chat/widget/video_player/video_player_slider.dart';
 
 // ignore: must_be_immutable
 class VideoPlayerBottom extends StatefulWidget {

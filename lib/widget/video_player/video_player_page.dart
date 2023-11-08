@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:qianshi_chat/utils/video_player_utils.dart';
-import 'package:qianshi_chat/widget/video_player_bottom.dart';
-import 'package:qianshi_chat/widget/video_player_center.dart';
-import 'package:qianshi_chat/widget/video_player_gestures.dart';
-import 'package:qianshi_chat/widget/video_player_top.dart';
+import 'package:qianshi_chat/widget/video_player/video_player_bottom.dart';
+import 'package:qianshi_chat/widget/video_player/video_player_center.dart';
+import 'package:qianshi_chat/widget/video_player/video_player_gestures.dart';
+import 'package:qianshi_chat/widget/video_player/video_player_top.dart';
 
 class VideoPlayerPage extends StatefulWidget {
   const VideoPlayerPage({Key? key}) : super(key: key);

@@ -2,16 +2,21 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/models/attachment.dart';
 
 import 'package:qianshi_chat/models/message.dart';
 import 'package:qianshi_chat/pages/photo_view_page.dart';
 
+// ignore: must_be_immutable
 class ImageMessage extends StatefulWidget {
   final Message message;
-  const ImageMessage(
+  late List<Attachment> attachments;
+  ImageMessage(
     this.message, {
     super.key,
-  });
+  }) {
+    attachments = [Attachment.fromMap(message.content)];
+  }
 
   @override
   State<StatefulWidget> createState() => _ImageMessageState();
@@ -22,7 +27,7 @@ class _ImageMessageState extends State<ImageMessage> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: widget.message.attachments.map<Widget>((attachment) {
+      children: widget.attachments.map<Widget>((attachment) {
         var path = attachment.previewPath ?? attachment.rawPath;
         var isLocaleFile = !path.startsWith('http');
         return GestureDetector(
