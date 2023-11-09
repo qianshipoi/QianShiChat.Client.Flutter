@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MessageAttachment {
   final String name;
   final String path;
-  final String size;
+  final int size;
   double progress = 0.0;
 
   MessageAttachment(

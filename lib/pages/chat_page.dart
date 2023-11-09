@@ -42,11 +42,11 @@ class _ChatPageState extends State<ChatPage> {
   final _scrollController = ScrollController();
   final _messageInputController = TextEditingController();
   var _page = 1;
-  var _hasMore = true;
-  final List<Message> _messages = [];
-  bool _notSend = true;
-  bool _audioInput = false;
-  bool _displayEmoji = false;
+  final _hasMore = true.obs;
+  final _messages = <Message>[].obs;
+  final _notSend = true.obs;
+  final _audioInput = false.obs;
+  final _displayEmoji = false.obs;
   final _focusNode = FocusNode();
   final _emojiList = [
     '😀',
@@ -60,6 +60,26 @@ class _ChatPageState extends State<ChatPage> {
     '🙂',
     '🙃'
   ];
+  final _uploadingAttachments = <MessageAttachment>[
+    MessageAttachment(
+      name: 'test',
+      path: 'test',
+      size: 100,
+      progress: 0,
+    ),
+    MessageAttachment(
+      name: 'test2',
+      path: 'test2',
+      size: 100,
+      progress: 50,
+    ),
+    MessageAttachment(
+      name: 'test3',
+      path: 'test3',
+      size: 100,
+      progress: 99,
+    ),
+  ].obs;
 
   @override
   void initState() {
@@ -69,9 +89,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _privateChatListener(Message message) {
-    setState(() {
-      _messages.add(message);
-    });
+    _messages.add(message);
     _jumpToBottom();
   }
 
@@ -101,10 +119,8 @@ class _ChatPageState extends State<ChatPage> {
     var message = Message.fromMap(response.body!.data);
     message.fromUser = _currentUser;
     logger.i('send message $message');
-    setState(() {
-      _messages.add(message);
-      _jumpToBottom();
-    });
+    _messages.add(message);
+    _jumpToBottom();
   }
 
   Future<void> _showMoreActionBottomSheet() async {
@@ -116,43 +132,32 @@ class _ChatPageState extends State<ChatPage> {
             child: Column(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.attach_file),
-                  title: Text(Globalization.attachFile.tr),
-                  onTap: () {
-                    _filePicker();
-                  },
-                ),
+                    leading: const Icon(Icons.attach_file),
+                    title: Text(Globalization.attachFile.tr),
+                    onTap: _filePicker),
                 ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: Text(Globalization.takePhoto.tr),
-                  onTap: () {
-                    _filePicker();
-                  },
-                ),
+                    leading: const Icon(Icons.camera_alt),
+                    title: Text(Globalization.takePhoto.tr),
+                    onTap: _filePicker),
                 ListTile(
-                  leading: const Icon(Icons.video_call),
-                  title: Text(Globalization.takeVideo.tr),
-                  onTap: () {
-                    _filePicker();
-                  },
-                ),
+                    leading: const Icon(Icons.video_call),
+                    title: Text(Globalization.takeVideo.tr),
+                    onTap: _filePicker),
               ],
             ),
           );
         });
   }
 
-  Future _refresh() async {
-    if (!_hasMore) return;
+  Future<void> _refresh() async {
+    if (!_hasMore.value) return;
     _getHistory();
   }
 
-  Future _getHistory() async {
+  Future<void> _getHistory() async {
     var response = await _chatProvider.history(_room.id, _page, size: 15);
     var result = response.body!;
-    if (!result.succeeded) {
-      throw Exception(jsonEncode(result.errors));
-    }
+    if (!result.succeeded) throw Exception(jsonEncode(result.errors));
     var pagedList = PagedList.fromMap(result.data);
 
     var data = List<Map<String, dynamic>>.from(pagedList.items)
@@ -162,30 +167,25 @@ class _ChatPageState extends State<ChatPage> {
       var user = await _usersController.getUserById(element.fromId);
       element.fromUser = user;
     }
-    setState(() {
-      _messages.insertAll(0, data);
-      _hasMore = pagedList.hasNext;
-      _page++;
-    });
+    data.sort((a, b) => b.createTime.compareTo(a.createTime));
+    _messages.insertAll(0, data);
+    _hasMore.value = pagedList.hasNext;
+    _page++;
   }
 
-  Widget _buildFutureBuilder() {
+  Widget _buildListView(BuildContext context) {
     return RefreshIndicator(
-        notificationPredicate: (notification) => _hasMore,
+        notificationPredicate: (notification) => _hasMore.value,
         onRefresh: _refresh,
-        child: _buildListView(context, _messages));
-  }
-
-  Widget _buildListView(BuildContext context, List<Message> messages) {
-    return ListView.separated(
-        controller: _scrollController,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemCount: messages.length,
-        itemBuilder: (context, index) {
-          return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: _buildMessageView(context, messages[index]));
-        });
+        child: Obx(
+          () => ListView.separated(
+              controller: _scrollController,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: _buildMessageView(context, _messages[index]))),
+        ));
   }
 
   Widget _buildMessageView(BuildContext context, Message message) {
@@ -231,7 +231,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(_room.name ?? ""),
+          title: Text(_room.name!),
         ),
         body: Column(
           children: [
@@ -239,23 +239,15 @@ class _ChatPageState extends State<ChatPage> {
               child: Stack(
                 children: [
                   Container(
-                      color: Colors.blueGrey, child: _buildFutureBuilder()),
+                    color: Colors.blueGrey,
+                    child: _buildListView(context),
+                  ),
                   Positioned(
                     bottom: 8.0,
                     left: 8.0,
                     right: 8.0,
-                    child: MessageAttachmentUploadPanel(attachments: [
-                      MessageAttachment(
-                          name: "test",
-                          path: "test",
-                          size: "100",
-                          progress: 0.5),
-                      MessageAttachment(
-                          name: "test2",
-                          path: "test2",
-                          size: "100",
-                          progress: 0.1)
-                    ]),
+                    child: MessageAttachmentUploadPanel(
+                        attachments: _uploadingAttachments),
                   )
                 ],
               ),
@@ -276,51 +268,38 @@ class _ChatPageState extends State<ChatPage> {
             Row(
               children: [
                 IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _audioInput = !_audioInput;
-                      });
-                    },
-                    icon: Icon(
-                        _audioInput ? Icons.keyboard : Icons.multitrack_audio)),
+                    onPressed: () => _audioInput.value = !_audioInput.value,
+                    icon: Obx(() => Icon(_audioInput.value
+                        ? Icons.keyboard
+                        : Icons.multitrack_audio))),
                 Expanded(
-                  child: _audioInput
+                  child: (Obx(() => _audioInput.value
                       ? ElevatedButton(
                           onPressed: () {},
                           child: Text(Globalization.holdToTalk.tr))
                       : TextField(
                           controller: _messageInputController,
-                          onChanged: (value) {
-                            setState(() {
-                              _notSend = value.isEmpty;
-                            });
-                          },
-                        ),
+                          onChanged: (value) => _notSend.value = value.isEmpty,
+                        ))),
                 ),
                 IconButton(
                     onPressed: () {
-                      setState(() {
-                        _displayEmoji = !_displayEmoji;
-                        if (_displayEmoji) {
-                          FocusScope.of(context).requestFocus(_focusNode);
-                        }
-                      });
+                      _displayEmoji.value = !_displayEmoji.value;
+                      if (_displayEmoji.value) {
+                        FocusScope.of(context).requestFocus(_focusNode);
+                      }
                     },
                     icon: const Icon(Icons.emoji_emotions)),
-                _notSend
+                Obx(() => _notSend.value
                     ? IconButton(
-                        onPressed: () {
-                          _showMoreActionBottomSheet();
-                        },
+                        onPressed: _showMoreActionBottomSheet,
                         icon: const Icon(Icons.add))
                     : ElevatedButton(
-                        onPressed: () {
-                          _sendTextMessage();
-                        },
-                        child: Text(Globalization.send.tr)),
+                        onPressed: _sendTextMessage,
+                        child: Text(Globalization.send.tr))),
               ],
             ),
-            _buildEmojiView(),
+            Obx(() => _buildEmojiView()),
           ],
         ),
       ),
@@ -328,9 +307,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildEmojiView() {
-    if (!_displayEmoji) {
-      return const SizedBox.shrink();
-    }
+    if (!_displayEmoji.value) return const SizedBox.shrink();
     return Expanded(
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -351,13 +328,8 @@ class _ChatPageState extends State<ChatPage> {
     var result = await FilePicker.platform.pickFiles();
     if (result == null) return;
 
-    var message = _uploadAttachment(result.files.first, (message) {
-      _sendAttachmentMessage(message);
-    });
-
-    setState(() {
-      _messages.add(message);
-    });
+    var message = _uploadAttachment(result.files.first, _sendAttachmentMessage);
+    _messages.add(message);
   }
 
   Message _buildAttachmentMessage(Attachment attachment) {
@@ -426,12 +398,17 @@ class _ChatPageState extends State<ChatPage> {
 
     var message = _buildAttachmentMessage(attachment);
 
-    _attachmentProvider
-        .upload(filepath,
-            uploadProgress: (progress) => setState(() {
-                  attachment.progress = progress;
-                }))
-        .then((response) {
+    var messageAttachment = MessageAttachment(
+        name: attachment.name,
+        path: attachment.rawPath,
+        size: attachment.size,
+        progress: 0);
+
+    _attachmentProvider.upload(filepath, uploadProgress: (progress) {
+      messageAttachment.progress = progress;
+      _uploadingAttachments.refresh();
+      attachment.progress = progress;
+    }).then((response) {
       if (response.hasError) {
         logger.e(response.statusText);
         return null;
@@ -447,8 +424,11 @@ class _ChatPageState extends State<ChatPage> {
         size: newAttachment.size,
       );
       message.content = attachment.toMap();
+      _uploadingAttachments.remove(messageAttachment);
       uploadComplete(message);
     });
+
+    _uploadingAttachments.add(messageAttachment);
 
     return message;
   }

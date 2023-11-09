@@ -71,4 +71,8 @@ class CommonUtil {
         return "application/octet-stream";
     }
   }
+
+  static bool isLocaleFile(String path) {
+    return path.startsWith('file://');
+  }
 }

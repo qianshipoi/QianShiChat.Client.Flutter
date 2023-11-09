@@ -30,6 +30,7 @@ import 'package:qianshi_chat/utils/global.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 import 'package:qianshi_chat/utils/sputils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 var logger = Logger(
   filter: null,
@@ -109,6 +110,7 @@ class MyApp extends StatelessWidget {
         RouterContants.newGroup: (context) => const NewGroupPage(),
         RouterContants.search: (context) => const SearchPage(),
       },
+      builder: EasyLoading.init(),
       translations: LocaleMessage(),
       locale: Get.find<IndexController>().currentLocale.value,
       fallbackLocale: const Locale('en', 'US'),

@@ -6,6 +6,8 @@ class Globalization {
 
   static const String logout = "logout";
 
+  static const String loading = "loading";
+
   static const String userProfile = "userProfile";
   static const String sendMessage = "sendMessage";
   static const String addFriend = "addFriend";

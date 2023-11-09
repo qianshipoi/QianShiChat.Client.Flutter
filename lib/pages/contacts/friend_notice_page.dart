@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/locale/globalization.dart';
@@ -77,13 +78,9 @@ class _FriendNoticePageState extends State<FriendNoticePage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
+            return Center(child: Text(snapshot.error.toString()));
           } else if (snapshot.data!.isEmpty) {
-            return Center(
-              child: Text(Globalization.noNewInformationYet.tr),
-            );
+            return Center(child: Text(Globalization.noNewInformationYet.tr));
           } else {
             return _buildListView(snapshot.data!);
           }
@@ -127,23 +124,65 @@ class _FriendNoticePageState extends State<FriendNoticePage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                EasyLoading.show(
+                    status: Globalization.loading.tr,
+                    maskType: EasyLoadingMaskType.black,
+                    dismissOnTap: false);
+                try {
+                  var response = await _userProvider.friendApplyApproval(
+                      item.id, ApplyStatus.passed);
+                  if (response.hasError) {
+                    throw Exception(response.body);
+                  }
+                  var result = response.body!;
+                  if (!result.succeeded) {
+                    throw Exception(result.errors);
+                  }
+                  setState(() {
+                    item.status = ApplyStatus.passed;
+                  });
+                } finally {
+                  EasyLoading.dismiss();
+                }
+              },
               icon: const Icon(
                 Icons.check,
                 color: Colors.green,
               )),
           IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                EasyLoading.show(
+                    status: Globalization.loading.tr,
+                    maskType: EasyLoadingMaskType.black,
+                    dismissOnTap: false);
+                try {
+                  var response = await _userProvider.friendApplyApproval(
+                      item.id, ApplyStatus.rejected);
+                  if (response.hasError) {
+                    throw Exception(response.body);
+                  }
+                  var result = response.body!;
+                  if (!result.succeeded) {
+                    throw Exception(result.errors);
+                  }
+                  setState(() {
+                    item.status = ApplyStatus.rejected;
+                  });
+                } finally {
+                  EasyLoading.dismiss();
+                }
+              },
               icon: const Icon(
                 Icons.close,
                 color: Colors.red,
               )),
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.more_horiz,
-                color: Colors.grey,
-              )),
+          // IconButton(
+          //     onPressed: () {},
+          //     icon: const Icon(
+          //       Icons.more_horiz,
+          //       color: Colors.grey,
+          //     )),
         ],
       );
     } else if (item.status == ApplyStatus.passed) {

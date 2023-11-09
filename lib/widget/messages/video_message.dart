@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/message.dart';
+import 'package:qianshi_chat/utils/common_util.dart';
 import 'package:video_player/video_player.dart';
 
 // ignore: must_be_immutable
@@ -23,10 +24,11 @@ class VideoMessageState extends State<VideoMessage> {
   @override
   void initState() {
     super.initState();
-    _videoPlayerController = widget._attachment.rawPath.startsWith('http')
-        ? VideoPlayerController.networkUrl(
-            Uri.parse(widget._attachment.rawPath))
-        : VideoPlayerController.file(File(widget._attachment.rawPath));
+    _videoPlayerController =
+        !CommonUtil.isLocaleFile(widget._attachment.rawPath)
+            ? VideoPlayerController.networkUrl(
+                Uri.parse(widget._attachment.rawPath))
+            : VideoPlayerController.file(File(widget._attachment.rawPath));
   }
 
   @override
