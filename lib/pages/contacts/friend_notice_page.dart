@@ -18,11 +18,10 @@ class FriendNoticePage extends StatefulWidget {
 }
 
 class _FriendNoticePageState extends State<FriendNoticePage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
   final UserProvider _userProvider = Get.find();
-  late Future<List<FriendApply>> _applyFuture;
   final roomsController = Get.find<RoomsController>();
+  late Future<List<FriendApply>> _applyFuture;
   int beforeLastTime = 0;
   bool hasMore = true;
 
@@ -65,9 +64,7 @@ class _FriendNoticePageState extends State<FriendNoticePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(Globalization.newFriend.tr),
-      ),
+      appBar: AppBar(title: Text(Globalization.newFriend.tr)),
       body: _buildFutureBuilder(),
     );
   }
@@ -177,12 +174,30 @@ class _FriendNoticePageState extends State<FriendNoticePage> {
                 Icons.close,
                 color: Colors.red,
               )),
-          // IconButton(
-          //     onPressed: () {},
-          //     icon: const Icon(
-          //       Icons.more_horiz,
-          //       color: Colors.grey,
-          //     )),
+          IconButton(
+              onPressed: () async {
+                EasyLoading.show(
+                    status: Globalization.loading.tr,
+                    maskType: EasyLoadingMaskType.black,
+                    dismissOnTap: false);
+                try {
+                  var response = await _userProvider.friendApplyApproval(
+                      item.id, ApplyStatus.ignored);
+                  if (response.hasError) {
+                    throw Exception(response.body);
+                  }
+                  var result = response.body!;
+                  if (!result.succeeded) {
+                    throw Exception(result.errors);
+                  }
+                  setState(() {
+                    item.status = ApplyStatus.ignored;
+                  });
+                } finally {
+                  EasyLoading.dismiss();
+                }
+              },
+              icon: const Icon(Icons.notifications_off_outlined)),
         ],
       );
     } else if (item.status == ApplyStatus.passed) {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:qianshi_chat/locale/globalization.dart';
+import 'package:qianshi_chat/main.dart';
 import 'package:qianshi_chat/models/attachment.dart';
 import 'package:qianshi_chat/models/userinfo.dart';
 import 'package:qianshi_chat/providers/attachment_provider.dart';
@@ -19,7 +20,7 @@ class NewGroupPage extends StatefulWidget {
 class _NewGroupPageState extends State<NewGroupPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
   final AttachmentProvider _attachmentProvider = Get.find();
-  late String _groupName;
+  String _groupName = "";
   Attachment? _groupAvatar;
   final List<UserInfo> _groupMembers = [];
   final GroupProvider _groupProvider = Get.find<GroupProvider>();
@@ -49,6 +50,7 @@ class _NewGroupPageState extends State<NewGroupPage> {
                           name: _groupName,
                           avatarId: _groupAvatar!.id);
                       var body = response.body!;
+                      logger.i(body);
                       if (!body.succeeded) {
                         Get.snackbar(
                             Globalization.createFailed.tr, body.errors);

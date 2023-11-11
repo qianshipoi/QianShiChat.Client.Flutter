@@ -45,6 +45,7 @@ dependencies:
   brightness_volume: ^1.0.3
   image_cropper: ^5.0.0
   curved_navigation_bar: ^1.0.3
+  photo_manager: ^2.7.2
   wechat_assets_picker: ^8.7.1
   flutter_easyloading: ^3.0.5
 

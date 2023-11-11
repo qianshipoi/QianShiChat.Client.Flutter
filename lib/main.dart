@@ -29,7 +29,6 @@ import 'package:qianshi_chat/utils/database.dart';
 import 'package:qianshi_chat/utils/global.dart';
 import 'package:qianshi_chat/utils/http/http_util.dart';
 import 'package:qianshi_chat/utils/sputils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 var logger = Logger(
@@ -44,20 +43,18 @@ var logger = Logger(
   ),
 );
 
-late SharedPreferences preferences;
-
 void logout() {
   Get.find<ChatHubController>().stop();
-  preferences.remove(accessTokenKey);
-  preferences.remove(userInfoKey);
+  SpUtil().remove(accessTokenKey);
+  SpUtil().remove(userInfoKey);
   Get.currentRoute == RouterContants.login
       ? null
       : Get.off(() => const LoginPage(), routeName: RouterContants.login);
 }
 
 void initLoginInfo(String token, UserInfo userInfo) {
-  preferences.setString(accessTokenKey, token);
-  preferences.setString(userInfoKey, userInfo.toJson());
+  SpUtil().setString(accessTokenKey, token);
+  SpUtil().setString(userInfoKey, userInfo.toJson());
   Global.accessToken = token;
   Get.find<CurrentUserController>().current.value = userInfo;
   Get.find<ChatHubController>().start();
@@ -71,11 +68,7 @@ Future<void> main() async {
 
 Future<void> initStore() async {
   await SpUtil().init();
-  HttpUtils.init(
-    baseUrl: ApiContants.apiBaseUrl,
-  );
-
-  preferences = await SharedPreferences.getInstance();
+  HttpUtils.init(baseUrl: ApiContants.apiBaseUrl);
 
   Get.put(CurrentUserController());
   Get.put(ChatHubController());
