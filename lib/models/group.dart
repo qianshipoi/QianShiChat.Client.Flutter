@@ -41,11 +41,13 @@ class Group {
       avatar: map['avatar'] as String,
       totalUser: map['totalUser'] as int,
       createTime: map['createTime'] as int,
-      users: List<UserInfo>.from(
-        (map['users'] as List<int>).map<UserInfo>(
-          (x) => UserInfo.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      users: map['users'] == null
+          ? []
+          : List<UserInfo>.from(
+              (map['users']).map<UserInfo>(
+                (x) => UserInfo.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
     );
   }
 

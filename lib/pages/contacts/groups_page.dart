@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:qianshi_chat/constants.dart';
 import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/enums/message_send_type.dart';
+import 'package:qianshi_chat/stores/current_user_controller.dart';
 import 'package:qianshi_chat/stores/groups_controller.dart';
 import 'package:qianshi_chat/stores/rooms_controller.dart';
 
@@ -14,7 +15,8 @@ class GroupsPage extends StatefulWidget {
 }
 
 class _GroupsPageState extends State<GroupsPage> {
-  final roomsController = Get.find<RoomsController>();
+  final _roomsController = Get.find<RoomsController>();
+  final _currentUserController = Get.find<CurrentUserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +35,18 @@ class _GroupsPageState extends State<GroupsPage> {
             title: Text(controller.groups[index].name),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () async {
-              var room = await roomsController.createRoom(
-                  controller.groups[index].id, MessageSendType.group);
+              var group = controller.groups[index];
+              var room = await _roomsController.createRoom(
+                  group.id, MessageSendType.group);
               if (room == null) {
                 Get.snackbar(
-                    Globalization.error.tr, Globalization.errorNetwork.tr);
+                    Globalization.error.tr, Globalization.errorNetwork);
                 return;
               }
+              room.avatar = group.avatar;
+              room.name = group.name;
+              room.fromUser = _currentUserController.current.value;
+              room.toObject = group;
               Get.toNamed(RouterContants.chat, arguments: room);
             },
           );
