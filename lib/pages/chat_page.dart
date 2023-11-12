@@ -167,7 +167,7 @@ class _ChatPageState extends State<ChatPage> {
       var user = await _usersController.getUserById(element.fromId);
       element.fromUser = user;
     }
-    data.sort((a, b) => b.createTime.compareTo(a.createTime));
+    data.sort((a, b) => a.createTime.compareTo(b.createTime));
     _messages.insertAll(0, data);
     _hasMore.value = pagedList.hasNext;
     _page++;

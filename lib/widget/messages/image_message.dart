@@ -32,18 +32,22 @@ class _ImageMessageState extends State<ImageMessage> {
         var isLocaleFile = CommonUtil.isLocaleFile(path);
         return GestureDetector(
           onTap: () {
-            Get.to(() => PhotoViewPage(
-                  imageProvider: isLocaleFile
-                      ? FileImage(File(attachment.rawPath))
-                      : NetworkImage(attachment.rawPath) as ImageProvider,
-                  loadingChild: Stack(children: [
+            Get.to(
+              () => PhotoViewPage(
+                imageProvider: isLocaleFile
+                    ? FileImage(File(attachment.rawPath))
+                    : NetworkImage(attachment.rawPath) as ImageProvider,
+                loadingChild: Stack(
+                  alignment: Alignment.center,
+                  children: [
                     isLocaleFile ? Image.file(File(path)) : Image.network(path),
                     const Center(child: CircularProgressIndicator()),
-                  ]),
-                  heroTag: attachment.id.toString(),
-                  backgroundDecoration:
-                      const BoxDecoration(color: Colors.black),
-                ));
+                  ],
+                ),
+                heroTag: attachment.id.toString(),
+                backgroundDecoration: const BoxDecoration(color: Colors.black),
+              ),
+            );
           },
           child: Hero(
               tag: attachment.id.toString(),
