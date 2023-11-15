@@ -9,6 +9,7 @@ import 'package:qianshi_chat/pages/apply_group_page.dart';
 import 'package:qianshi_chat/pages/chat_page.dart';
 import 'package:qianshi_chat/pages/contacts/group_notice_page.dart';
 import 'package:qianshi_chat/pages/contacts/friend_notice_page.dart';
+import 'package:qianshi_chat/pages/friend_group_manage_page.dart';
 import 'package:qianshi_chat/pages/login_page.dart';
 import 'package:qianshi_chat/pages/new_group_page.dart';
 import 'package:qianshi_chat/pages/search_page.dart';
@@ -102,6 +103,8 @@ class MyApp extends StatelessWidget {
         RouterContants.applyGroup: (context) => const ApplyGroupPage(),
         RouterContants.newGroup: (context) => const NewGroupPage(),
         RouterContants.search: (context) => const SearchPage(),
+        RouterContants.friendGroupManage: (context) =>
+            const FriendGroupManagePage(),
       },
       builder: EasyLoading.init(),
       translations: LocaleMessage(),

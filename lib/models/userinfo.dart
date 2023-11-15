@@ -1,5 +1,31 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+class FriendInfo extends UserInfo {
+  int friendGroupId;
+  FriendInfo(
+      {required this.friendGroupId,
+      required super.id,
+      required super.account,
+      required super.nickName,
+      required super.avatar,
+      required super.createTime,
+      required super.isOnline,
+      super.alias});
+
+  factory FriendInfo.fromApiResultMap(Map<String, dynamic> map) {
+    return FriendInfo(
+      friendGroupId:
+          map.containsKey('friendGroupId') ? map['friendGroupId'] as int : 0,
+      id: map['id'] as int,
+      account: map['account'] as String,
+      nickName: map['nickName'] as String,
+      avatar: map['avatar'] as String,
+      createTime: map['createTime'] as int,
+      isOnline: map['isOnline'] as bool,
+      alias: map['alias'] as String?,
+    );
+  }
+}
 
 class UserInfo {
   int id;
