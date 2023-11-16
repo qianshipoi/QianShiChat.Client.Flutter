@@ -13,12 +13,14 @@ class FriendGroupManagePage extends StatefulWidget {
 class _FriendGroupManagePageState extends State<FriendGroupManagePage> {
   final friendsController = Get.find<FriendsController>();
   final TextEditingController _groupNameController = TextEditingController();
+
   _add() {
     _groupNameController.clear();
     Get.defaultDialog(
       title: '新建分组',
       content: TextField(
         controller: _groupNameController,
+        autofocus: true,
       ),
       textConfirm: '确定',
       textCancel: '取消',
@@ -40,6 +42,7 @@ class _FriendGroupManagePageState extends State<FriendGroupManagePage> {
       title: '编辑分组',
       content: TextField(
         controller: _groupNameController,
+        autofocus: true,
       ),
       textConfirm: '确定',
       textCancel: '取消',
@@ -76,48 +79,46 @@ class _FriendGroupManagePageState extends State<FriendGroupManagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('分组管理'),
-        actions: [
-          IconButton(
-            onPressed: Get.back,
-            icon: const Icon(Icons.close),
+      appBar: AppBar(title: const Text('分组管理')),
+      body: Obx(() {
+        return ReorderableListView.builder(
+          header: ListTile(
+            leading: const Icon(Icons.add),
+            title: const Text('新建分组'),
+            onTap: _add,
           ),
-        ],
-      ),
-      body: ReorderableListView.builder(
-        header: ListTile(
-          leading: const Icon(Icons.add),
-          title: const Text('新建分组'),
-          onTap: _add,
-        ),
-        buildDefaultDragHandles: true,
-        itemBuilder: (context, index) {
-          var group = friendsController.groups[index];
-          return ListTile(
-            key: ValueKey(group.id),
-            onTap: () => _edit(group),
-            title: Text(group.name.value),
-            leading: IconButton(
-              onPressed: () => _delete(group.id),
-              icon: const Icon(
-                Icons.remove_circle,
-                color: Colors.red,
-              ),
-            ),
-            trailing: ReorderableDragStartListener(
-                index: index, child: const Icon(Icons.menu)),
-          );
-        },
-        itemCount: friendsController.groups.length,
-        onReorder: (oldIndex, newIndex) {
-          if (oldIndex < newIndex) {
-            newIndex -= 1;
-          }
-          final FriendGroup group = friendsController.groups.removeAt(oldIndex);
-          friendsController.groups.insert(newIndex, group);
-        },
-      ),
+          buildDefaultDragHandles: true,
+          itemBuilder: (context, index) {
+            var group = friendsController.groups[index];
+            return ListTile(
+              key: ValueKey(group.id),
+              onTap: () => _edit(group),
+              title: Text(group.name.value),
+              leading: group.isDefault
+                  ? const Icon(Icons.remove_circle)
+                  : GestureDetector(
+                      onTap: () => _delete(group.id),
+                      child: const Icon(
+                        Icons.remove_circle,
+                        color: Colors.red,
+                      ),
+                    ),
+              trailing: ReorderableDragStartListener(
+                  index: index, child: const Icon(Icons.menu)),
+            );
+          },
+          itemCount: friendsController.groups.length,
+          onReorder: (oldIndex, newIndex) async {
+            if (oldIndex < newIndex) {
+              newIndex -= 1;
+            }
+            final FriendGroup group =
+                friendsController.groups.removeAt(oldIndex);
+            friendsController.groups.insert(newIndex, group);
+            await friendsController.moveGroup();
+          },
+        );
+      }),
     );
   }
 }

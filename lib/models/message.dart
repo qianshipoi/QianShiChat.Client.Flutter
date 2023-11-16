@@ -87,9 +87,9 @@ class Message {
       roomId: map['roomId'] as String,
       content: map['content'] as dynamic,
       createTime: map['createTime'] as int,
-      sendType: MessageSendType.values[map['sendType'] as int],
+      sendType: MessageSendType.fromValue(map['sendType'] as int),
       messageType: MessageType.fromValue(map['messageType'] as int),
-      status: MessageStatus.values[map['status'] ?? 0],
+      status: MessageStatus.fromValue(map['status'] ?? 0),
       fromUser: map['fromUser'] != null
           ? UserInfo.fromMap(map['fromUser'] as Map<String, dynamic>)
           : null,

@@ -61,24 +61,24 @@ class _ChatPageState extends State<ChatPage> {
     '🙃'
   ];
   final _uploadingAttachments = <MessageAttachment>[
-    MessageAttachment(
-      name: 'test',
-      path: 'test',
-      size: 100,
-      progress: 0,
-    ),
-    MessageAttachment(
-      name: 'test2',
-      path: 'test2',
-      size: 100,
-      progress: 50,
-    ),
-    MessageAttachment(
-      name: 'test3',
-      path: 'test3',
-      size: 100,
-      progress: 99,
-    ),
+    // MessageAttachment(
+    //   name: 'test',
+    //   path: 'test',
+    //   size: 100,
+    //   progress: 0,
+    // ),
+    // MessageAttachment(
+    //   name: 'test2',
+    //   path: 'test2',
+    //   size: 100,
+    //   progress: 50,
+    // ),
+    // MessageAttachment(
+    //   name: 'test3',
+    //   path: 'test3',
+    //   size: 100,
+    //   progress: 99,
+    // ),
   ].obs;
 
   @override

@@ -73,6 +73,7 @@ class CommonUtil {
   }
 
   static bool isLocaleFile(String path) {
-    return path.startsWith('file://');
+    return !path.startsWith("http");
+    // path.startsWith('file://');
   }
 }
