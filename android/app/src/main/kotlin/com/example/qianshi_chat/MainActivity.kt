@@ -1,4 +1,4 @@
-package com.example.qianshi_chat
+package top.kuriyama.qianshi_chat
 
 import io.flutter.embedding.android.FlutterActivity
 
