@@ -85,4 +85,12 @@ class Globalization {
   static const String groupNameCanNotBeEmpty = "groupNameCanNotBeEmpty";
 
   static const String search = "search";
+
+  static const String newFriendGroup = "newFriendGroup";
+  static const String friendGroupManage = "friendGroupManage";
+  static const String myFriend = "myFriend";
+  static const String deleteFriendGroup = "deleteFriendGroup";
+  static const String renameFriendGroup = "renameFriendGroup";
+  static const String moveFriendGroup = "moveFriendGroup";
+  static const String moveFriend = "moveFriend";
 }

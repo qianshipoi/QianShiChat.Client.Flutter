@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_chat/locale/globalization.dart';
 import 'package:qianshi_chat/models/friend_group.dart';
 import 'package:qianshi_chat/stores/friends_controller.dart';
 
@@ -79,25 +80,25 @@ class _FriendGroupManagePageState extends State<FriendGroupManagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('分组管理')),
+      appBar: AppBar(title: Text(Globalization.friendGroupManage.tr)),
       body: Obx(() {
         return ReorderableListView.builder(
           header: ListTile(
             leading: const Icon(Icons.add),
-            title: const Text('新建分组'),
+            title: Text(Globalization.newFriendGroup.tr),
             onTap: _add,
           ),
           buildDefaultDragHandles: true,
           itemBuilder: (context, index) {
             var group = friendsController.groups[index];
             return ListTile(
-              key: ValueKey(group.id),
-              onTap: () => _edit(group),
-              title: Text(group.name.value),
-              leading: group.isDefault
+              key: ValueKey(group.value.id),
+              onTap: () => _edit(group.value),
+              title: Obx(() => Text(group.value.name.value)),
+              leading: group.value.isDefault
                   ? const Icon(Icons.remove_circle)
                   : GestureDetector(
-                      onTap: () => _delete(group.id),
+                      onTap: () => _delete(group.value.id),
                       child: const Icon(
                         Icons.remove_circle,
                         color: Colors.red,
@@ -112,8 +113,7 @@ class _FriendGroupManagePageState extends State<FriendGroupManagePage> {
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
-            final FriendGroup group =
-                friendsController.groups.removeAt(oldIndex);
+            final group = friendsController.groups.removeAt(oldIndex);
             friendsController.groups.insert(newIndex, group);
             await friendsController.moveGroup();
           },

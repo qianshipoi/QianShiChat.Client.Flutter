@@ -70,6 +70,13 @@ class LocaleMessage extends Translations {
           Globalization.groupNameCanNotBeEmpty: "Group name can not be empty",
           Globalization.search: "Search",
           Globalization.loading: "Loading...",
+          Globalization.newFriendGroup: "New Friend Group",
+          Globalization.friendGroupManage: "Friend Group Manage",
+          Globalization.renameFriendGroup: "Rename Friend Group",
+          Globalization.deleteFriendGroup: "Delete Friend Group",
+          Globalization.myFriend: "My Friend",
+          Globalization.moveFriendGroup: "Move Friend Group",
+          Globalization.moveFriend: "Move Friend",
         },
         "zh_CN": {
           Globalization.language: "语言",
@@ -136,6 +143,13 @@ class LocaleMessage extends Translations {
           Globalization.groupNameCanNotBeEmpty: "群聊名称不能为空",
           Globalization.search: "搜索",
           Globalization.loading: "加载中...",
+          Globalization.newFriendGroup: "新建好友分组",
+          Globalization.friendGroupManage: "好友分组管理",
+          Globalization.renameFriendGroup: "重命名好友分组",
+          Globalization.deleteFriendGroup: "删除好友分组",
+          Globalization.myFriend: "我的好友",
+          Globalization.moveFriendGroup: "移动好友分组",
+          Globalization.moveFriend: "移动好友",
         },
       };
 }

@@ -35,8 +35,13 @@ class FriendGroup {
         map['id'] as int,
         map['name'] as String,
         map['createTime'] as int,
-        map['isDefault'] is bool,
+        map['isDefault'] as bool,
         map['sort'] as int,
         0, []);
+  }
+
+  @override
+  String toString() {
+    return 'FriendGroup{id: $id, name: $name, createTime: $createTime, isDefault: $isDefault, sort: $sort, totalCount: $totalCount, friends: $friends}';
   }
 }

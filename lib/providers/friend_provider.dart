@@ -37,7 +37,7 @@ class FriendProvider extends ApiBaseProvider {
   }
 
   Future<Response<GlobalResponse>> renameGroup(int id, String name) {
-    return put<GlobalResponse>('friend/groups/$id', {'name': name});
+    return put<GlobalResponse>('friend/groups/$id/rename', {'name': name});
   }
 
   Future<Response<GlobalResponse>> removeGroup(int id) {

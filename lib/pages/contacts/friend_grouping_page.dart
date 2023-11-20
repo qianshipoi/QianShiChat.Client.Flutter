@@ -22,14 +22,15 @@ class _FriendGroupingPageState extends State<FriendGroupingPage> {
           return Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              key: PageStorageKey(controller.groups[0].id),
+              key: PageStorageKey(controller.groups[0].value.id),
               title: GestureDetector(
                   onLongPress: () =>
                       Get.toNamed(RouterContants.friendGroupManage),
-                  child: Text(controller.groups[index].name.value)),
+                  child: Obx(
+                      () => Text(controller.groups[index].value.name.value))),
               maintainState: true,
               children: [
-                _buildListView(context, controller.groups[index].friends),
+                _buildListView(context, controller.groups[index].value.friends),
               ],
             ),
           );

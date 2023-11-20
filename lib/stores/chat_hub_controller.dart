@@ -11,9 +11,8 @@ import 'package:signalr_netcore/signalr_client.dart';
 
 class ChatHubController extends GetxController {
   final httpOptions = HttpConnectionOptions(
-    accessTokenFactory: () => Future(() => Global.accessToken!),
-    requestTimeout: 10000
-  );
+      accessTokenFactory: () => Future(() => Global.accessToken!),
+      requestTimeout: 10000);
   late HubConnection _hubConnection;
   var isConnection = false.obs;
   final List<Function(Message)> _listeners = [];
@@ -26,7 +25,7 @@ class ChatHubController extends GetxController {
 
     _hubConnection.onclose(({error}) {
       isConnection.value = false;
-      logger.i("signalr连接断开");
+      logger.i("signalr onclose");
     });
 
     _hubConnection.on('PrivateChat', (arguments) {
@@ -52,14 +51,14 @@ class ChatHubController extends GetxController {
     if (isConnection.value) return;
     await _hubConnection.start();
     isConnection.value = true;
-    logger.i("signalr连接成功");
+    logger.i("signalr started");
   }
 
   Future<void> stop() async {
     if (!isConnection.value) return;
     await _hubConnection.stop();
     isConnection.value = false;
-    logger.i("signalr连接断开");
+    logger.i("signalr stopped");
   }
 
   Future<List<Room>?> getRooms() async {
