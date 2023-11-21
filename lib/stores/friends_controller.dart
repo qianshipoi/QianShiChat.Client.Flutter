@@ -45,6 +45,19 @@ class FriendsController extends GetxController {
             .toList();
       }
 
+      final defaultGroup =
+          groups.firstWhere((element) => element.value.isDefault);
+
+      final defaultFriends = friends
+          .where((friend) =>
+              friend.friendGroupId == defaultGroup.value.id ||
+              friend.friendGroupId == 0)
+          .toList();
+
+      logger.i(defaultFriends);
+
+      defaultGroup.value.friends.addAll(defaultFriends);
+
       for (var element in groups) {
         element.value.friends.addAll(friends
             .where((friend) => friend.friendGroupId == element.value.id)

@@ -26,8 +26,15 @@ class _FriendGroupingPageState extends State<FriendGroupingPage> {
               title: GestureDetector(
                   onLongPress: () =>
                       Get.toNamed(RouterContants.friendGroupManage),
-                  child: Obx(
-                      () => Text(controller.groups[index].value.name.value))),
+                  child: Obx(() => Row(
+                        children: [
+                          Text(controller.groups[index].value.name.value),
+                          Text(
+                            '(${controller.groups[index].value.friends.length})',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ))),
               maintainState: true,
               children: [
                 _buildListView(context, controller.groups[index].value.friends),
